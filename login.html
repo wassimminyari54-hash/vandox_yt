@@ -50,6 +50,8 @@
                 } else if (response.status === 401) {
                     alert("كلمة المرور خاطئة!");
                 } else if (response.ok) {
+                    // حفظ الإيميل في المتصفح قبل التوجيه للإنديكس
+                    localStorage.setItem('userEmail', email); 
                     alert("تم تسجيل الدخول بنجاح!");
                     window.location.href = "index.html";
                 }

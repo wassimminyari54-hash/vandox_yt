@@ -10,6 +10,22 @@
 </head>
 
 <body>
+
+    <!-- قسم الملف الشخصي -->
+    <div class="user-profile">
+        <div class="profile-trigger" onclick="toggleMenu()">
+            <span id="display-name">تحميل...</span>
+            <img id="profile-img" src="default-avatar.png" alt="Profile">
+        </div>
+        
+        <div class="profile-menu" id="profileMenu">
+            <label for="imageInput">🖼️ تغيير الصورة</label>
+            <input type="file" id="imageInput" style="display:none" onchange="uploadImage(this)">
+            <button onclick="deleteAccount()" style="color: #ff4757;">🗑️ حذف الحساب</button>
+            <button onclick="logout()">🚪 تسجيل الخروج</button>
+        </div>
+    </div>
+
     <div class="header">
         <div class="navbar">
             <a href="login.html">تسجيل الدخول</a>
@@ -106,8 +122,62 @@
             allowfullscreen>
         </iframe>
     </div>
-
 </div>
+
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const userEmail = localStorage.getItem('userEmail');
+            const savedAvatar = localStorage.getItem('userAvatar');
+
+            // تحديث الاسم
+            if (userEmail) {
+                document.getElementById('display-name').innerText = userEmail.split('@')[0];
+            } else {
+
+                document.querySelector('.user-profile').style.display = 'none';
+            }
+
+            if (savedAvatar) {
+                document.getElementById('profile-img').src = savedAvatar;
+            }
+        });
+
+        function toggleMenu() {
+            const menu = document.getElementById('profileMenu');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        window.onclick = function(event) {
+            if (!event.target.closest('.user-profile')) {
+                document.getElementById('profileMenu').style.display = 'none';
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('userEmail');
+            localStorage.removeItem('userAvatar');
+            window.location.href = 'login.html';
+        }
+
+        function uploadImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imageData = e.target.result;
+                    document.getElementById('profile-img').src = imageData;
+                    localStorage.setItem('userAvatar', imageData);
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function deleteAccount() {
+            if(confirm("هل أنت متأكد من حذف حسابك نهائياً؟")) {
+                localStorage.clear();
+                window.location.href = 'sign_in.html';
+            }
+        }
+    </script>
 
 </body>
 </html>

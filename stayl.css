@@ -107,3 +107,72 @@ h2 {
     aspect-ratio: 16 / 9;
     border-radius: 40px;
 }
+
+.user-profile {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1001;
+}
+
+.profile-trigger {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    background: rgba(0, 255, 255, 0.1);
+    padding: 6px 15px;
+    border-radius: 50px;
+    border: 1px solid aqua;
+    backdrop-filter: blur(5px);
+    transition: 0.3s;
+}
+
+.profile-trigger:hover {
+    background: rgba(0, 255, 255, 0.2);
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+}
+
+#profile-img {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover; /* حل مشكلة تعوج الصورة */
+    border: 1px solid aqua;
+}
+
+#display-name {
+    font-weight: bold;
+    color: aqua;
+    font-size: 14px;
+}
+
+.profile-menu {
+    display: none;
+    position: absolute;
+    top: 55px;
+    left: 0;
+    background: #16161d;
+    border: 1px solid rgba(0, 255, 255, 0.3);
+    border-radius: 12px;
+    min-width: 150px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.7);
+    overflow: hidden;
+}
+
+.profile-menu button, .profile-menu label {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background: none;
+    border: none;
+    color: white;
+    text-align: right;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.2s;
+}
+
+.profile-menu button:hover, .profile-menu label:hover {
+    background: rgba(0, 255, 255, 0.1);
+}
