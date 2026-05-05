@@ -119,16 +119,5 @@
         <p>لديك حساب بالفعل؟ <a href="login.html">تسجيل الدخول</a></p>
     </div>
 
-    <script type="module">
-        import { signUpUser } from './auth.js';
-        const form = document.querySelector('form'); // تأكد أن عندك وسم <form>
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const email = form.querySelector('input[type="email"]').value;
-            const password = form.querySelector('input[type="password"]').value;
-            signUpUser(email, password);
-        });
-    </script>
-
 </body>
 </html>

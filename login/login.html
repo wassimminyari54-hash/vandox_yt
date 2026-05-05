@@ -115,16 +115,5 @@
         <p>ليس لديك حساب؟ <a href="sign_in.html">إنشاء حساب جديد</a></p>
     </div>
 
-    <script type="module">
-        import { loginUser } from './auth.js';
-        const form = document.querySelector('form');
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const email = form.querySelector('input[type="email"]').value;
-            const password = form.querySelector('input[type="password"]').value;
-            loginUser(email, password);
-        });
-    </script>
-
 </body>
 </html>
