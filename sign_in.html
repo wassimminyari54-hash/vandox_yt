@@ -34,29 +34,40 @@
         <p>لديك حساب بالفعل؟ <a href="login.html">تسجيل الدخول</a></p>
     </div>
 
-    <script>
-        document.getElementById('signupForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('signupEmail').value;
-            const password = document.getElementById('signupPassword').value;
+<script type="module">
+    // 1. استيراد مكتبة Supabase
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-            try {
-                const response = await fetch('http://localhost:3000/signup', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password })
-                });
+    // 2. إعداد الاتصال (استخدم نفس بياناتك السابقة)
+    const supabaseURL = 'رابط_مشروعك_من_supabase';
+    const supabaseKey = 'مفتاح_API_الخاص_بك';
+    const supabase = createClient(supabaseURL, supabaseKey);
 
-                if (response.ok) {
-                    alert("تم إنشاء الحساب بنجاح!");
-                    window.location.href = "login.html";
-                } else {
-                    alert("حدث خطأ في الخادم.");
+    document.getElementById('signupForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const username = document.getElementById('username').value;
+        const email = document.getElementById('signupEmail').value;
+        const password = document.getElementById('signupPassword').value;
+
+        // 3. عملية إنشاء الحساب في Supabase
+        const { data, error } = await supabase.auth.signUp({
+            email: email,
+            password: password,
+            options: {
+                data: {
+                    display_name: username // حفظ اسم المستخدم في بيانات الحساب
                 }
-            } catch (error) {
-                alert("تأكد أن السيرفر شغال!");
             }
         });
-    </script>
+
+        if (error) {
+            alert("حدث خطأ: " + error.message);
+        } else {
+            // تنبيه للمستخدم لتأكيد البريد الإلكتروني (إعداد افتراضي في Supabase)
+            alert("تم إنشاء الحساب! يرجى التحقق من بريدك الإلكتروني لتأكيد الحساب.");
+            window.location.href = "login.html";
+        }
+    });
+</script>
 </body>
 </html>
