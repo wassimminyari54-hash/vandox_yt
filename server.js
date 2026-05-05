@@ -27,9 +27,11 @@ app.post('/login', (req, res) => {
         return res.status(404).send("أنشئ حساب أولاً");
     }
 
-    const users = fs.readFileSync(DB_FILE, 'utf8').split('\n');
-    const userExists = users.some(line => line.startsWith(`${email}:`));
-    const authorized = users.some(line => line === `${email}:${password}`);
+    const fileContent = fs.readFileSync(DB_FILE, 'utf8');
+    const lines = fileContent.split('\n');
+    
+    const userExists = lines.some(line => line.split(':')[0] === email);
+    const authorized = lines.some(line => line === `${email}:${password}`);
 
     if (!userExists) {
         return res.status(404).send("أنشئ حساب أولاً");
@@ -40,4 +42,4 @@ app.post('/login', (req, res) => {
     }
 });
 
-app.listen(3000, () => console.log('السيرفر شغال'));
+app.listen(3000, () => console.log('السيرفر شغال على البورت 3000'));

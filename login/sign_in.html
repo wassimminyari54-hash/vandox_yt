@@ -3,170 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <title>إنشاء حساب | Vandox YT</title>
+    <style>
+        body { margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; background-color: #0f0f13; display: flex; justify-content: center; align-items: center; height: 100vh; color: #fff; }
+        .auth-card { background: rgba(255, 255, 255, 0.03); padding: 40px; border-radius: 20px; border: 1px solid rgba(0, 255, 255, 0.2); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5); width: 100%; max-width: 400px; text-align: center; backdrop-filter: blur(10px); }
+        .auth-card h2 { margin-bottom: 30px; color: aqua; font-size: 28px; }
+        .input-group { margin-bottom: 20px; text-align: right; }
+        .input-group input { width: 100%; padding: 12px 15px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1); background: rgba(255, 255, 255, 0.05); color: #fff; font-size: 16px; box-sizing: border-box; }
+        .input-group input:focus { outline: none; border-color: aqua; background: rgba(255, 255, 255, 0.08); }
+        .btn-main { width: 100%; padding: 14px; border-radius: 12px; border: none; background-color: aqua; color: #000; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        .btn-main:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 255, 255, 0.4); }
+        p { margin-top: 25px; font-size: 14px; color: #b2bec3; }
+        p a { color: aqua; text-decoration: none; font-weight: bold; }
+    </style>
 </head>
-
-<style>
-    /* إعدادات الخط والخلفية */
-    body {
-        margin: 0;
-        padding: 0;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background-color: #0f0f13;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        color: #fff;
-    }
-
-    .auth-card {
-        background: rgba(255, 255, 255, 0.03); /* شفافية خفيفة */
-        padding: 40px;
-        border-radius: 20px;
-        border: 1px solid rgba(162, 155, 254, 0.2); /* إطار بنفسجي خفيف جداً */
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-        width: 100%;
-        max-width: 400px;
-        text-align: center;
-        backdrop-filter: blur(10px); /* تأثير الزجاج المغبش */
-    }
-
-    .auth-card h2 {
-        margin-bottom: 30px;
-        color: aqua; /* اللون البنفسجي المفضل عندك */
-        font-size: 28px;
-    }
-
-    /* تصميم حقول الإدخال */
-    .input-group {
-        margin-bottom: 20px;
-        text-align: right;
-    }
-
-    .input-group input {
-        width: 100%;
-        padding: 12px 15px;
-        border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        background: rgba(255, 255, 255, 0.05);
-        color: #fff;
-        font-size: 16px;
-        transition: 0.3s ease;
-        box-sizing: border-box;
-    }
-
-    .input-group input:focus {
-        outline: none;
-        border-color: aqua;
-        background: rgba(255, 255, 255, 0.08);
-        box-shadow: 0 0 10px rgba(162, 155, 254, 0.2);
-    }
-
-    /* الزر الرئيسي */
-    .btn-main {
-        width: 100%;
-        padding: 14px;
-        border-radius: 12px;
-        border: none;
-        background-color: aqua;
-        color: white;
-        font-weight: bold;
-        font-size: 16px;
-        cursor: pointer;
-        transition: 0.3s transform, 0.3s box-shadow;
-        margin-top: 10px;
-    }
-
-    .btn-main:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(108, 92, 231, 0.4);
-    }
-
-    /* الروابط السفلية */
-    p {
-        margin-top: 25px;
-        font-size: 14px;
-        color: #b2bec3;
-    }
-
-    p a {
-        color: aqua;
-        text-decoration: none;
-        font-weight: bold;
-    }
-
-    p a:hover {
-        text-decoration: underline;
-    }
-</style>
-
-
 <body class="auth-page">
     <div class="auth-card">
         <h2>إنشاء حساب جديد</h2>
         <form id="signupForm">
             <div class="input-group">
-                <input type="text" placeholder="اسم المستخدم" required>
+                <input type="text" id="username" placeholder="اسم المستخدم" required>
             </div>
             <div class="input-group">
-                <input type="email" placeholder="البريد الإلكتروني" required>
+                <input type="email" id="signupEmail" placeholder="البريد الإلكتروني" required>
             </div>
             <div class="input-group">
-                <input type="password" placeholder="كلمة السر" required>
+                <input type="password" id="signupPassword" placeholder="كلمة السر" required>
             </div>
             <button type="submit" class="btn-main">تسجيل</button>
         </form>
         <p>لديك حساب بالفعل؟ <a href="login.html">تسجيل الدخول</a></p>
     </div>
 
-    <!-- تأكد أن الحقول عندها هاد الـ IDs -->
-    <form id="authForm">
-        <input type="email" id="email" required>
-        <input type="password" id="password" required>
-        <button type="submit">تسجيل</button>
-    </form>
-
     <script>
-        document.getElementById('authForm').addEventListener('submit', async (e) => {
+        document.getElementById('signupForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
-            const userData = {
-                email: document.getElementById('email').value,
-                password: document.getElementById('password').value
-            };
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
 
             try {
-                const response = await fetch('http://localhost:3000/save-data', {
+                const response = await fetch('http://localhost:3000/signup', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(userData)
+                    body: JSON.stringify({ email, password })
                 });
 
                 if (response.ok) {
-                    alert("تم الحفظ في ملف database.txt بنجاح!");
+                    alert("تم إنشاء الحساب بنجاح!");
+                    window.location.href = "login.html";
+                } else {
+                    alert("حدث خطأ في الخادم.");
                 }
             } catch (error) {
-                alert("تأكد أن السيرفر (Node.js) شغال في الخلفية!");
+                alert("تأكد أن السيرفر شغال!");
             }
         });
-
-        document.getElementById('signupForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-
-        const response = await fetch('http://localhost:3000/signup', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password })
-        });
-
-        if (response.ok) {
-            alert("تم إنشاء الحساب! سيتم توجيهك لتسجيل الدخول.");
-            window.location.href = "login.html"; // التوجيه لصفحة الدخول
-        }
-        });
     </script>
-
 </body>
 </html>
