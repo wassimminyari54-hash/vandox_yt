@@ -119,5 +119,37 @@
         <p>لديك حساب بالفعل؟ <a href="login.html">تسجيل الدخول</a></p>
     </div>
 
+    <!-- تأكد أن الحقول عندها هاد الـ IDs -->
+    <form id="authForm">
+        <input type="email" id="email" required>
+        <input type="password" id="password" required>
+        <button type="submit">تسجيل</button>
+    </form>
+
+    <script>
+    document.getElementById('authForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const userData = {
+            email: document.getElementById('email').value,
+            password: document.getElementById('password').value
+        };
+
+        try {
+            const response = await fetch('http://localhost:3000/save-data', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(userData)
+            });
+
+            if (response.ok) {
+                alert("تم الحفظ في ملف database.txt بنجاح!");
+            }
+        } catch (error) {
+            alert("تأكد أن السيرفر (Node.js) شغال في الخلفية!");
+        }
+    });
+    </script>
+
 </body>
 </html>
