@@ -34,28 +34,30 @@
 <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-    // البيانات المستخرجة من صورك
     const supabaseURL = 'https://oalsswnamgkoz.supabase.co'; 
-    const supabaseKey = 'sb_publicable_04f1NYVqbWriXXM5Pqy_bQ_cnpFHP...'; // انسخ الكود الكامل من الخانة الأولى
+    const supabaseKey = 'sb_publicable_04f1NYVqbWriXXM5Pqy_bQ_cnpFHP...';
 
     const supabase = createClient(supabaseURL, supabaseKey);
 
-    // مثال لعملية التسجيل (Signup)
-    async function signUpUser(email, password, username) {
-        const { data, error } = await supabase.auth.signUp({
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+
+        const { data, error } = await supabase.auth.signInWithPassword({
             email: email,
             password: password,
-            options: {
-                data: { display_name: username }
-            }
         });
 
         if (error) {
-            alert("خطأ: " + error.message);
+            alert("خطأ في تسجيل الدخول: " + error.message);
         } else {
-            alert("تم! تحقق من بريدك الإلكتروني.");
+            localStorage.setItem('userEmail', email); 
+            alert("تم تسجيل الدخول بنجاح!");
+            window.location.href = "index.html";
         }
-    }
+    });
 </script>
 </body>
 </html>
