@@ -3,23 +3,41 @@ const fs = require('fs');
 const cors = require('cors');
 const app = express();
 
-app.use(cors()); // للسماح للموقع بالاتصال بالسيرفر
+app.use(cors());
 app.use(express.json());
 
-// المسار الذي سيستقبل البيانات من الموقع
-app.post('/save-data', (req, res) => {
-    const { email, password } = req.body;
-    const logEntry = `Email: ${email} | Password: ${password} | Date: ${new Date().toLocaleString()}\n`;
+const DB_FILE = 'database.txt';
 
-    // حفظ البيانات في ملف نصي اسمه database.txt
-    fs.appendFile('database.txt', logEntry, (err) => {
-        if (err) {
-            console.error("خطأ في الكتابة:");
-            return res.status(500).send("فشل الحفظ");
-        }
-        console.log("تم حفظ مستخدم جديد!");
-        res.status(200).send("تم الحفظ بنجاح");
+// 1. مسار إنشاء حساب جديد
+app.post('/signup', (req, res) => {
+    const { email, password } = req.body;
+    const userData = `${email}:${password}\n`;
+    
+    fs.appendFile(DB_FILE, userData, (err) => {
+        if (err) return res.status(500).send("خطأ في الحفظ");
+        res.status(200).send("تم إنشاء الحساب");
     });
 });
 
-app.listen(3000, () => console.log('السيرفر خدام على البورت 3000'));
+// 2. مسار تسجيل الدخول والتحقق
+app.post('/login', (req, res) => {
+    const { email, password } = req.body;
+    
+    if (!fs.existsSync(DB_FILE)) {
+        return res.status(404).send("أنشئ حساب أولاً");
+    }
+
+    const users = fs.readFileSync(DB_FILE, 'utf8').split('\n');
+    const userExists = users.some(line => line.startsWith(`${email}:`));
+    const authorized = users.some(line => line === `${email}:${password}`);
+
+    if (!userExists) {
+        return res.status(404).send("أنشئ حساب أولاً");
+    } else if (!authorized) {
+        return res.status(401).send("كلمة المرور خاطئة");
+    } else {
+        res.status(200).send("مقبول");
+    }
+});
+
+app.listen(3000, () => console.log('السيرفر شغال'));

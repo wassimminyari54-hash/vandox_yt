@@ -127,28 +127,45 @@
     </form>
 
     <script>
-    document.getElementById('authForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const userData = {
-            email: document.getElementById('email').value,
-            password: document.getElementById('password').value
-        };
+        document.getElementById('authForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const userData = {
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value
+            };
 
-        try {
-            const response = await fetch('http://localhost:3000/save-data', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(userData)
-            });
+            try {
+                const response = await fetch('http://localhost:3000/save-data', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(userData)
+                });
 
-            if (response.ok) {
-                alert("تم الحفظ في ملف database.txt بنجاح!");
+                if (response.ok) {
+                    alert("تم الحفظ في ملف database.txt بنجاح!");
+                }
+            } catch (error) {
+                alert("تأكد أن السيرفر (Node.js) شغال في الخلفية!");
             }
-        } catch (error) {
-            alert("تأكد أن السيرفر (Node.js) شغال في الخلفية!");
+        });
+
+        document.getElementById('signupForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        const response = await fetch('http://localhost:3000/signup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+
+        if (response.ok) {
+            alert("تم إنشاء الحساب! سيتم توجيهك لتسجيل الدخول.");
+            window.location.href = "login.html"; // التوجيه لصفحة الدخول
         }
-    });
+        });
     </script>
 
 </body>
