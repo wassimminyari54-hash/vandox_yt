@@ -31,37 +31,31 @@
         <p>ليس لديك حساب؟ <a href="sign_in.html">إنشاء حساب جديد</a></p>
     </div>
 
-<script type="module"> // ضروري جداً إضافة type="module" لاستخدام import
-    // 1. استيراد المكتبة
+<script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-    // 2. إعداد الاتصال (ضع بياناتك هنا)
-    const supabaseURL = 'رابط_مشروعك_من_supabase';
-    const supabaseKey = 'مفتاح_API_الخاص_بك';
+    // البيانات المستخرجة من صورك
+    const supabaseURL = 'https://oalsswnamgkoz.supabase.co'; 
+    const supabaseKey = 'sb_publicable_04f1NYVqbWriXXM5Pqy_bQ_cnpFHP...'; // انسخ الكود الكامل من الخانة الأولى
+
     const supabase = createClient(supabaseURL, supabaseKey);
 
-    // 3. معالجة نموذج تسجيل الدخول
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const email = document.getElementById('loginEmail').value;
-        const password = document.getElementById('loginPassword').value;
-
-        // استخدام Supabase Auth لتسجيل الدخول
-        const { data, error } = await supabase.auth.signInWithPassword({
+    // مثال لعملية التسجيل (Signup)
+    async function signUpUser(email, password, username) {
+        const { data, error } = await supabase.auth.signUp({
             email: email,
             password: password,
+            options: {
+                data: { display_name: username }
+            }
         });
 
         if (error) {
-            alert("خطأ في الدخول: " + error.message);
+            alert("خطأ: " + error.message);
         } else {
-            // حفظ الإيميل محلياً لعرضه في صفحة البروفايل
-            localStorage.setItem('userEmail', email); 
-            alert("تم تسجيل الدخول بنجاح!");
-            window.location.href = "index.html";
+            alert("تم! تحقق من بريدك الإلكتروني.");
         }
-    });
+    }
 </script>
 </body>
 </html>
