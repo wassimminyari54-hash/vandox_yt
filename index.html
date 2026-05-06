@@ -124,74 +124,77 @@
     </div>
 </div>
 
-<script type="module">
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-    const supabaseURL = 'https://oalsswnamgkoz.supabase.co'; 
-    const supabaseKey = 'sb_publishable_9mRBr2TrsA07k9jLLSnXjg_5Sqsg...';
-    const supabase = createClient(supabaseURL, supabaseKey);
+        // إعدادات سوبابيس باستخدام مفتاح matrix
+        const supabaseURL = 'https://oalsswnamgkoz.supabase.co'; 
+        const supabaseKey = 'sb_publishable_9mRBr2TrsA07k9jLLSnXjg_5Sqsg68v_8'; // المفتاح الصحيح من صورة matrix
+        const supabase = createClient(supabaseURL, supabaseKey);
 
-    document.addEventListener('DOMContentLoaded', async () => {
-        const { data: { user } } = await supabase.auth.getUser();
+        // 1. عند تحميل الصفحة: جلب بيانات اليوزر
+        document.addEventListener('DOMContentLoaded', async () => {
+            const { data: { user } } = await supabase.auth.getUser();
 
-        if (user) {
-            const displayName = user.user_metadata.display_name || user.email.split('@')[0];
-            document.getElementById('display-name').innerText = displayName;
+            if (user) {
+                // عرض الاسم من البيانات المضافة أو الإيميل
+                const displayName = user.user_metadata.display_name || user.email.split('@')[0];
+                document.getElementById('display-name').innerText = displayName;
 
-            const savedAvatar = localStorage.getItem('userAvatar');
-            if (savedAvatar) {
-                document.getElementById('profile-img').src = savedAvatar;
+                // تحميل الصورة من التخزين المحلي
+                const savedAvatar = localStorage.getItem('userAvatar');
+                if (savedAvatar) {
+                    document.getElementById('profile-img').src = savedAvatar;
+                }
+            } else {
+                // إذا لم يسجل الدخول، إخفاء البروفايل
+                const profileDiv = document.querySelector('.user-profile');
+                if (profileDiv) profileDiv.style.display = 'none';
             }
-        } else {
-            const userProfile = document.querySelector('.user-profile');
-            if (userProfile) userProfile.style.display = 'none';
-        }
-    });
+        });
 
-    window.toggleMenu = function() {
-        const menu = document.getElementById('profileMenu');
-        if (menu) {
-            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-        }
-    };
-
-    window.onclick = function(event) {
-        if (!event.target.closest('.user-profile')) {
+        // 2. دالة فتح وإغلاق المنيو
+        window.toggleMenu = function() {
             const menu = document.getElementById('profileMenu');
-            if (menu) menu.style.display = 'none';
-        }
-    }
+            menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+        };
 
-    window.logout = async function() {
-        const { error } = await supabase.auth.signOut();
-        if (error) {
-            alert("خطأ أثناء تسجيل الخروج: " + error.message);
-        } else {
+        // 3. تسجيل الخروج
+        window.logout = async function() {
+            await supabase.auth.signOut();
             localStorage.removeItem('userAvatar');
             window.location.href = 'login.html';
-        }
-    };
+        };
 
-    window.uploadImage = function(input) {
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const imageData = e.target.result;
-                document.getElementById('profile-img').src = imageData;
-                localStorage.setItem('userAvatar', imageData);
-            };
-            reader.readAsDataURL(input.files[0]);
-        }
-    };
+        // 4. تغيير الصورة الشخصية
+        window.uploadImage = function(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imageData = e.target.result;
+                    document.getElementById('profile-img').src = imageData;
+                    localStorage.setItem('userAvatar', imageData);
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        };
 
-    // دالة حذف الحساب
-    window.deleteAccount = function() {
-        if(confirm("هل أنت متأكد من حذف حسابك نهائياً؟")) {
-            localStorage.clear();
-            window.location.href = 'sign_in.html';
-        }
-    };
-</script>
+        // 5. حذف الحساب (محلياً)
+        window.deleteAccount = function() {
+            if(confirm("هل أنت متأكد من حذف حسابك نهائياً؟")) {
+                localStorage.clear();
+                window.location.href = 'sign_in.html';
+            }
+        };
+
+        // إغلاق المنيو عند الضغط في الخارج
+        window.onclick = function(event) {
+            if (!event.target.closest('.user-profile')) {
+                const menu = document.getElementById('profileMenu');
+                if (menu) menu.style.display = 'none';
+            }
+        };
+    </script>
 
 </body>
 </html>
