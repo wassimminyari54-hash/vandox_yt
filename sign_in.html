@@ -38,7 +38,7 @@
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
     const supabaseURL = 'https://oalsswnamgkoz.supabase.co'; 
-    const supabaseKey = 'sb_publicable_04f1NYVqbWriXXM5Pqy_bQ_cnpFHP...';
+    const supabaseKey = 'sb_publishable_9mRBr2TrsA07k9jLLSnXjg_5Sqsg...'; 
 
     const supabase = createClient(supabaseURL, supabaseKey);
 
@@ -60,7 +60,7 @@
         if (error) {
             alert("خطأ في إنشاء الحساب: " + error.message);
         } else {
-            alert("تم إنشاء الحساب! يرجى التحقق من بريدك الإلكتروني (أو سجل الدخول مباشرة إذا كنت قد عطلت Confirm Email في Supabase).");
+            alert("تم إنشاء الحساب بنجاح! يمكنك الآن تسجيل الدخول.");
             window.location.href = "login.html";
         }
     });

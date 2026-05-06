@@ -124,60 +124,74 @@
     </div>
 </div>
 
-<script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const userEmail = localStorage.getItem('userEmail');
+<script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+    const supabaseURL = 'https://oalsswnamgkoz.supabase.co'; 
+    const supabaseKey = 'sb_publishable_9mRBr2TrsA07k9jLLSnXjg_5Sqsg...';
+    const supabase = createClient(supabaseURL, supabaseKey);
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        const { data: { user } } = await supabase.auth.getUser();
+
+        if (user) {
+            const displayName = user.user_metadata.display_name || user.email.split('@')[0];
+            document.getElementById('display-name').innerText = displayName;
+
             const savedAvatar = localStorage.getItem('userAvatar');
-
-            // تحديث الاسم
-            if (userEmail) {
-                document.getElementById('display-name').innerText = userEmail.split('@')[0];
-            } else {
-
-                document.querySelector('.user-profile').style.display = 'none';
-            }
-
             if (savedAvatar) {
                 document.getElementById('profile-img').src = savedAvatar;
             }
-        });
+        } else {
+            const userProfile = document.querySelector('.user-profile');
+            if (userProfile) userProfile.style.display = 'none';
+        }
+    });
 
-        function toggleMenu() {
-            const menu = document.getElementById('profileMenu');
+    window.toggleMenu = function() {
+        const menu = document.getElementById('profileMenu');
+        if (menu) {
             menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
         }
+    };
 
-        window.onclick = function(event) {
-            if (!event.target.closest('.user-profile')) {
-                document.getElementById('profileMenu').style.display = 'none';
-            }
+    window.onclick = function(event) {
+        if (!event.target.closest('.user-profile')) {
+            const menu = document.getElementById('profileMenu');
+            if (menu) menu.style.display = 'none';
         }
+    }
 
-        function logout() {
-            localStorage.removeItem('userEmail');
+    window.logout = async function() {
+        const { error } = await supabase.auth.signOut();
+        if (error) {
+            alert("خطأ أثناء تسجيل الخروج: " + error.message);
+        } else {
             localStorage.removeItem('userAvatar');
             window.location.href = 'login.html';
         }
+    };
 
-        function uploadImage(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const imageData = e.target.result;
-                    document.getElementById('profile-img').src = imageData;
-                    localStorage.setItem('userAvatar', imageData);
-                };
-                reader.readAsDataURL(input.files[0]);
-            }
+    window.uploadImage = function(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const imageData = e.target.result;
+                document.getElementById('profile-img').src = imageData;
+                localStorage.setItem('userAvatar', imageData);
+            };
+            reader.readAsDataURL(input.files[0]);
         }
+    };
 
-        function deleteAccount() {
-            if(confirm("هل أنت متأكد من حذف حسابك نهائياً؟")) {
-                localStorage.clear();
-                window.location.href = 'sign_in.html';
-            }
+    // دالة حذف الحساب
+    window.deleteAccount = function() {
+        if(confirm("هل أنت متأكد من حذف حسابك نهائياً؟")) {
+            localStorage.clear();
+            window.location.href = 'sign_in.html';
         }
-    </script>
+    };
+</script>
 
 </body>
 </html>
