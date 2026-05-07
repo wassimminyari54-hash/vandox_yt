@@ -11,13 +11,12 @@
 
 <body>
 
-    <!-- قسم الملف الشخصي -->
     <div class="user-profile">
         <div class="profile-trigger" onclick="toggleMenu()">
             <span id="display-name">تحميل...</span>
             <img id="profile-img" src="default-avatar.png" alt="Profile">
         </div>
-        
+            
         <div class="profile-menu" id="profileMenu">
             <label for="imageInput">🖼️ تغيير الصورة</label>
             <input type="file" id="imageInput" style="display:none" onchange="uploadImage(this)">
@@ -25,20 +24,20 @@
             <button onclick="logout()">🚪 تسجيل الخروج</button>
         </div>
     </div>
+    <div class="navbar_2">
+        <div class="header">
+            <div class="navbar">
+                <a href="">التواصل</a>
+                <a href="">الإقتراحات</a>
+                <a href="#videos">الفيديوهات</a>
+                <a href="#channel">عن القناة</a>
+                <a href="index.html">الرئيسي</a>
+            </div>
 
-    <div class="header">
-        <div class="navbar">
-            <a href="login.html">تسجيل الدخول</a>
-            <a href="">التواصل</a>
-            <a href="">الإقتراحات</a>
-            <a href="#videos">الفيديوهات</a>
-            <a href="#channel">عن القناة</a>
-            <a href="index.html">الرئيسي</a>
-        </div>
-
-        <div class="header-container">
-            <h1 class="welcome">VANDOX</h1>
-            <img class="logo" src="image/Gemini_Generated_Image_q9ti0vq9ti0vq9ti.png" />
+            <div class="header-container">
+                <h1 class="welcome">VANDOX</h1>
+                <img class="logo" src="image/Gemini_Generated_Image_q9ti0vq9ti0vq9ti.png" />
+            </div>
         </div>
     </div>
     <img class="hidden-image" src="image/baner_2.png" />
@@ -46,7 +45,7 @@
     <div class="channel">
         <p>🎮 قناة Vandox_YT </p>
         <p>Gaming و Game Development</p>
-
+        <p class="عدد_المشتريكين">1.5 ألف مشترك</p>
         <p> مرحبا بك في قناة ايمن بربار، هنا تجد افضل محتوى العاب موبايل وكمبيوتر مع تركيز خاص على لعبة الغايمر والالعاب Gaming🔥
          اقوم بنشر فيديوهات عن الالعاب مثل MainCraft.Free Fire  والكثير
          وليس هذا فقط 👇</p>
@@ -124,77 +123,74 @@
     </div>
 </div>
 
-    <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+<h2>الإقتراحات</h2>
+<div class="channel"> <form action="https://formspree.io/f/aymenberbar2012@gmail.com" method="POST">
+    <form>
+        <label>إسمك الشخصي:</label><br>
+        <input type="text" name="name" required style="width: 90%; margin-bottom: 10px; background: #16161d; color: white; border: 1px solid aqua; padding: 5px;"><br>
+            
+        <label>رسالتك أو شكواك:</label><br>
+        <textarea name="message" required style="width: 90%; height: 100px; background: #16161d; color: white; border: 1px solid aqua; padding: 5px;"></textarea><br>
+            
+        <button type="submit" class="profile-trigger" style="margin-top: 10px; width: 100%; justify-content: center;">
+            🚀 إرسال الشكوى
+        </button>
+    </form>
+</div>
 
-        // إعدادات سوبابيس باستخدام مفتاح matrix
-        const supabaseURL = 'https://oalsswnamgkoz.supabase.co'; 
-        const supabaseKey = 'sb_publishable_9mRBr2TrsAO7k9jlLSnXjg_5Sqsgibw'; // المفتاح الصحيح من صورة matrix
-        const supabase = createClient(supabaseURL, supabaseKey);
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const isLoggedIn = localStorage.getItem('isLoggedIn');
+        const storedUser = JSON.parse(localStorage.getItem('localUser'));
 
-        // 1. عند تحميل الصفحة: جلب بيانات اليوزر
-        document.addEventListener('DOMContentLoaded', async () => {
-            const { data: { user } } = await supabase.auth.getUser();
-
-            if (user) {
-                // عرض الاسم من البيانات المضافة أو الإيميل
-                const displayName = user.user_metadata.display_name || user.email.split('@')[0];
-                document.getElementById('display-name').innerText = displayName;
-
-                // تحميل الصورة من التخزين المحلي
-                const savedAvatar = localStorage.getItem('userAvatar');
-                if (savedAvatar) {
-                    document.getElementById('profile-img').src = savedAvatar;
-                }
-            } else {
-                // إذا لم يسجل الدخول، إخفاء البروفايل
-                const profileDiv = document.querySelector('.user-profile');
-                if (profileDiv) profileDiv.style.display = 'none';
+        if (isLoggedIn === 'true' && storedUser) {
+            document.getElementById('display-name').innerText = storedUser.displayName;
+            
+            const savedAvatar = localStorage.getItem('userAvatar');
+            if (savedAvatar) {
+                document.getElementById('profile-img').src = savedAvatar;
             }
-        });
+        } else {
+            window.location.href = "login.html";
+        }
+    });
 
-        // 2. دالة فتح وإغلاق المنيو
-        window.toggleMenu = function() {
+    window.toggleMenu = function() {
+        const menu = document.getElementById('profileMenu');
+        menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+    };
+
+    window.uploadImage = function(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const imageData = e.target.result;
+                document.getElementById('profile-img').src = imageData;
+                localStorage.setItem('userAvatar', imageData);
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    };
+
+    window.logout = function() {
+        localStorage.setItem('isLoggedIn', 'false');
+        window.location.href = "login.html";
+    };
+
+    window.deleteAccount = function() {
+        if(confirm("هل أنت متأكد من حذف حسابك؟")) {
+            localStorage.clear();
+            alert("تم حذف الحساب بنجاح.");
+            window.location.href = "sign_in.html";
+        }
+    };
+
+    window.onclick = function(event) {
+        if (!event.target.closest('.user-profile')) {
             const menu = document.getElementById('profileMenu');
-            menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
-        };
-
-        // 3. تسجيل الخروج
-        window.logout = async function() {
-            await supabase.auth.signOut();
-            localStorage.removeItem('userAvatar');
-            window.location.href = 'login.html';
-        };
-
-        // 4. تغيير الصورة الشخصية
-        window.uploadImage = function(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const imageData = e.target.result;
-                    document.getElementById('profile-img').src = imageData;
-                    localStorage.setItem('userAvatar', imageData);
-                };
-                reader.readAsDataURL(input.files[0]);
-            }
-        };
-
-        // 5. حذف الحساب (محلياً)
-        window.deleteAccount = function() {
-            if(confirm("هل أنت متأكد من حذف حسابك نهائياً؟")) {
-                localStorage.clear();
-                window.location.href = 'sign_in.html';
-            }
-        };
-
-        // إغلاق المنيو عند الضغط في الخارج
-        window.onclick = function(event) {
-            if (!event.target.closest('.user-profile')) {
-                const menu = document.getElementById('profileMenu');
-                if (menu) menu.style.display = 'none';
-            }
-        };
-    </script>
-
+            if (menu) menu.style.display = 'none';
+        }
+    };
+</script>
 </body>
 </html>

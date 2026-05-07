@@ -34,35 +34,25 @@
         <p>لديك حساب بالفعل؟ <a href="login.html">تسجيل الدخول</a></p>
     </div>
 
-<script type="module">
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
-
-    const supabaseURL = 'https://oalsswnamgkoz.supabase.co'; 
-    const supabaseKey = 'sb_publishable_9mRBr2TrsAO7k9jlLSnXjg_5Sqsgibw'; 
-
-    const supabase = createClient(supabaseURL, supabaseKey);
-
-    document.getElementById('signupForm').addEventListener('submit', async (e) => {
+<script>
+    document.getElementById('signupForm').addEventListener('submit', (e) => {
         e.preventDefault();
 
         const username = document.getElementById('username').value;
         const email = document.getElementById('signupEmail').value;
         const password = document.getElementById('signupPassword').value;
 
-        const { data, error } = await supabase.auth.signUp({
+        const userData = {
+            displayName: username,
             email: email,
             password: password,
-            options: {
-                data: { display_name: username }
-            }
-        });
+            avatar: 'default-avatar.png'
+        };
 
-        if (error) {
-            alert("خطأ في إنشاء الحساب: " + error.message);
-        } else {
-            alert("تم إنشاء الحساب بنجاح! يمكنك الآن تسجيل الدخول.");
-            window.location.href = "login.html";
-        }
+        localStorage.setItem('localUser', JSON.stringify(userData));
+
+        alert("تم إنشاء الحساب بنجاح!");
+        window.location.href = "login.html";
     });
 </script>
 </body>
