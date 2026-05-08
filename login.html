@@ -35,7 +35,17 @@
 <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
 
 <script>
-    const firebaseConfig = { /* نفس الإعدادات السابقة */ };
+    // خاصك تحط هاد المعلومات كاملة هنا باش يخدم الاتصال
+    const firebaseConfig = {
+        apiKey: "AIzaSyAHerXxCb6wqeHvUXuFB5KOiKcVHg4jEeU",
+        authDomain: "vandox.firebaseapp.com",
+        databaseURL: "https://vandox-default-rtdb.firebaseio.com",
+        projectId: "vandox",
+        storageBucket: "vandox.firebasestorage.app",
+        messagingSenderId: "953994388305",
+        appId: "1:953994388305:web:8c592dd98f764fb931e970"
+    };
+
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
@@ -51,7 +61,8 @@
                 window.location.href = "index.html";
             })
             .catch((error) => {
-                alert("الإيميل أو كلمة السر غلط!");
+                console.error(error); // هادي غتبين ليك الخطأ الحقيقي في الكونسول
+                alert("الإيميل أو كلمة السر غلط أو الحساب ما فعلتيهش!");
             });
     });
 </script>
