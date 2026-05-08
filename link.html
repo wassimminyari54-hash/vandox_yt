@@ -277,7 +277,7 @@ h2 {
 
         // 6. مسح الرابط من Firebase
         function deleteLink(key) {
-            if (confirm("واش باغي تمسحو من السيرفر عند كلشي؟")) {
+            if (confirm("هل تريد خذف رابط")) {
                 database.ref('links/' + key).remove();
             }
         }

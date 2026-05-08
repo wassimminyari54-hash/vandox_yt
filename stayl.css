@@ -202,37 +202,36 @@ h2 {
     background: rgba(0, 255, 255, 0.1);
 }
 
-/* حاوية الشات */
+/* Container الكبير اللي جامع الشات كامل */
 .chat-container {
     display: flex;
     flex-direction: column;
-    height: 100vh;
-    padding-bottom: 80px; /* مساحة باش ما تغطيش خانة الكتابة على آخر رسالة */
+    /* كياخد الطول ديال الشاشة كاملة ناقص الـ Navbar */
+    height: calc(100vh - 70px); 
+    margin-top: 10px;
+    position: relative;
 }
 
-/* صندوق الرسائل */
+/* البلاصة فين كيبانو الرسائل */
 .chat-messages {
-    flex: 1;
-    overflow-y: auto;
-    padding: 20px;
+    flex: 1; /* كياخد كاع المساحة اللي شايطة بين الفوق ولتحت */
+    overflow-y: auto; /* كيولي يسكرولي غير هو */
+    padding: 15px;
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 10px;
+    scroll-behavior: smooth;
+
 }
 
-/* منطقة الكتابة (لاصقة لتحت) */
+/* البلاصة ديال الكتابة لتحت */
 .chat-input-area {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background: #1a1a20;
-    display: flex;
     padding: 15px;
+    border-top: 1px solid #ddd;
+    display: flex;
     gap: 10px;
-    box-sizing: border-box;
-    border-top: 1px solid rgba(0, 255, 255, 0.3);
-    box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.5);
+    position: sticky;
+    bottom: 0;
 }
 
 #message-input {
@@ -294,4 +293,29 @@ h2 {
 
 .my-message .user-name {
     color: #444;
+}
+
+.message {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.my-message .delete-btn {
+    display: block;
+    cursor: pointer;
+    color: #ff4757;
+    font-size: 12px;
+    margin-right: 10px;
+    opacity: 0.6;
+}
+
+.delete-btn:hover {
+    opacity: 1;
+}
+
+/* الرسائل ديال لخرين ما كيبانش فيهم زر الحذف */
+.message:not(.my-message) .delete-btn {
+    display: none;
 }

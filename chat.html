@@ -43,7 +43,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
 
 <script>
-    // 1. إعدادات Firebase
     const firebaseConfig = {
         apiKey: "AIzaSyAHerXxCb6wqeHvUXuFB5KOiKcVHg4jEeU",
         authDomain: "vandox.firebaseapp.com",
@@ -54,40 +53,30 @@
         appId: "1:953994388305:web:8c592dd98f764fb931e970"
     };
 
-    if (!firebase.apps.length) {
-        firebase.initializeApp(firebaseConfig);
-    }
+    if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
     const database = firebase.database();
-
     const chatBox = document.getElementById('chat-box');
     const messageInput = document.getElementById('message-input');
 
-    // 2. تحديث واجهة المستخدم من LocalStorage (نفس منطق الصفحة الرئيسية)
+    function scrollChatToBottom() {
+        setTimeout(() => { chatBox.scrollTop = chatBox.scrollHeight; }, 100);
+    }
+
     function updateProfileUI() {
         const isLoggedIn = localStorage.getItem('isLoggedIn');
         const storedUser = JSON.parse(localStorage.getItem('localUser'));
         const savedAvatar = localStorage.getItem('userAvatar');
-
         if (isLoggedIn === 'true' && storedUser) {
             document.getElementById('display-name').innerText = storedUser.displayName;
-            if (savedAvatar) {
-                document.getElementById('profile-img').src = savedAvatar;
-            }
-        } else {
-            // إيلا ما مسجلش يرجع لصفحة اللوكن
-            window.location.href = "login.html";
-        }
+            if (savedAvatar) document.getElementById('profile-img').src = savedAvatar;
+        } else { window.location.href = "login.html"; }
     }
-
-    // تشغيل التحديث فوراً
     updateProfileUI();
 
-    // 3. إرسال الرسالة
     function sendMessage() {
         const text = messageInput.value;
         const storedUser = JSON.parse(localStorage.getItem('localUser'));
         const savedAvatar = localStorage.getItem('userAvatar') || 'default-avatar.png';
-
         if (text.trim() !== "" && storedUser) {
             database.ref('messages').push({
                 username: storedUser.displayName,
@@ -96,34 +85,49 @@
                 timestamp: Date.now()
             }).then(() => {
                 messageInput.value = ""; 
+                scrollChatToBottom();
             });
         }
     }
 
-    function handleKeyPress(e) {
-        if (e.key === 'Enter') sendMessage();
+    function handleKeyPress(e) { if (e.key === 'Enter') sendMessage(); }
+
+    // حذف الرسالة من Firebase
+    window.deleteMessage = function(key) {
+        if(confirm("هل تريد حذف الرسالة")) {
+            database.ref('messages/' + key).remove();
+        }
     }
 
-    // 4. عرض الرسائل
+    // استقبال الرسائل
     database.ref('messages').limitToLast(30).on('child_added', (snapshot) => {
-        const data = snapshot.val();
+        displayMessage(snapshot.val(), snapshot.key);
+        scrollChatToBottom();
+    });
+
+    // إزالة الرسالة من الصفحة فور حذفها من الداتابيز
+    database.ref('messages').on('child_removed', (snapshot) => {
+        const msgElement = document.getElementById('msg-' + snapshot.key);
+        if (msgElement) msgElement.remove();
+    });
+
+    function displayMessage(data, key) {
         const storedUser = JSON.parse(localStorage.getItem('localUser'));
         const isMe = storedUser && data.username === storedUser.displayName;
 
         const msgHtml = `
-            <div class="message ${isMe ? 'my-message' : ''}">
+            <div class="message ${isMe ? 'my-message' : ''}" id="msg-${key}">
                 <img src="${data.avatar}" class="chat-avatar" onerror="this.src='default-avatar.png'">
                 <div class="msg-content">
                     <span class="user-name">${data.username}</span>
                     <p class="text">${data.text}</p>
+                    ${isMe ? `<span class="delete-btn" style="cursor:pointer; font-size:10px; color:#ff4757; display:block; margin-top:5px;" onclick="deleteMessage('${key}')">🗑️ حذف</span>` : ''}
                 </div>
             </div>
         `;
         chatBox.innerHTML += msgHtml;
-        chatBox.scrollTop = chatBox.scrollHeight;
-    });
+    }
 
-    // 5. دوال القائمة (نفس اللي في الصفحة الرئيسية)
     window.toggleMenu = function() {
         const menu = document.getElementById('profileMenu');
         menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
@@ -141,7 +145,6 @@
                 const imageData = e.target.result;
                 document.getElementById('profile-img').src = imageData;
                 localStorage.setItem('userAvatar', imageData);
-                // تحديث الصورة في الرسائل المستقبلية أيضاً
             };
             reader.readAsDataURL(input.files[0]);
         }
