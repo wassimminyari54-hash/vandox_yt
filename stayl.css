@@ -201,3 +201,70 @@ h2 {
 .profile-menu button:hover, .profile-menu label:hover {
     background: rgba(0, 255, 255, 0.1);
 }
+
+.suggestions-container {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+
+.suggestions-box {
+    width: 400px;
+    backdrop-filter: blur(8px);
+    border: 2px solid aqua;
+    padding: 25px;
+    border-radius: 20px;
+}
+
+.suggestions-box label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: white;
+}
+
+.suggestions-box input {
+    width: 100%;
+    margin-bottom: 20px;
+    background: #16161d;
+    color: white;
+    border: 1px solid aqua;
+    padding: 10px;
+    border-radius: 20px 20px 0 0;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.suggestions-box textarea {
+    width: 100%;
+    height: 120px;
+    background: #16161d;
+    color: white;
+    border: 1px solid aqua;
+    padding: 10px;
+    border-radius: 0 0 20px 20px;
+    outline: none;
+    resize: none;
+    box-sizing: border-box;
+}
+
+.btn-send {
+    margin-top: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    background: transparent;
+    color: aqua;
+    border: 1px solid aqua;
+    padding: 12px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s ease-in-out;
+}
+
+.btn-send:hover {
+    background: rgba(0, 255, 255, 0.1);
+}

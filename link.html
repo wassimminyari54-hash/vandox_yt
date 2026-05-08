@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>links</title>
+</head>
+<style>
+body {
+    background-color: #0b0b0b;
+    color: #ffffff;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+background-image: 
+        linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+        url('image/baner.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+.navbar{
+    position: fixed;
+    background: rgba(15, 15, 19, 0.8); 
+    backdrop-filter: blur(8px);
+    padding: 8px 20px;
+    border-radius: 50px;
+    z-index: 1000;;
+    padding: 10px;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    border: 1px solid rgba(0, 255, 255, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+.navbar:hover{
+    background: rgba(0, 255, 255, 0.1);
+    border-color: aqua;
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+}
+
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+.navbar a {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    font-size: 1.1rem;
+    transition: 0.3s ease-in-out;
+}
+
+.navbar a:hover {
+    color: aqua;
+    box-shadow: 0 2px 0 0 aqua;
+}
+
+h2 {
+    color: aqua;
+}
+
+/* تنسيق الروابط اللي غيتزادوا */
+.links-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 100px 20px;
+    justify-content: center;
+}
+
+.link-item {
+    background: rgba(0, 255, 255, 0.1);
+    border: 1px solid aqua;
+    padding: 15px 30px;
+    border-radius: 15px;
+    transition: 0.3s;
+}
+
+.link-item a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.link-item:hover {
+    background: aqua;
+    box-shadow: 0 0 20px aqua;
+}
+.link-item:hover a { color: black; }
+
+/* ستايل البوب أب */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background: #16161d;
+    margin: 15% auto;
+    padding: 30px;
+    border: 2px solid aqua;
+    width: 300px;
+    border-radius: 20px;
+    text-align: center;
+}
+
+.modal-content input {
+    width: 90%;
+    padding: 10px;
+    margin: 10px 0;
+    background: #0b0b0b;
+    border: 1px solid aqua;
+    color: white;
+    border-radius: 10px;
+}
+
+.modal-buttons { display: flex; gap: 10px; justify-content: center; margin-top: 15px; }
+.btn-confirm { background: aqua; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: bold; }
+.btn-cancel { background: #ff003c; color: white; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; }
+
+.link-item {
+    position: relative; /* ضرورية باش يجي زر الحذف فوق الرابط */
+    /* ... باقي الستايل ديالك ... */
+}
+
+.delete-btn {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: #ff003c;
+    color: white;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 18px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+    border: 1px solid white;
+    transition: 0.3s;
+}
+
+.delete-btn:hover {
+    transform: scale(1.2);
+    background: black;
+}
+
+</style>
+
+<body>
+    <div class="hede">
+        <div class="navbar">
+            <a href="index.html">الرئيسية</a>
+            
+            <a href="add-link.html" id="admin-link" style="display: none;">🔗 وضع الرابط</a>
+
+            <div id="passcode-area" style="display: inline-flex; gap: 5px; align-items: center;">
+                <input type="password" id="admin-pass" placeholder="الكود السري" style="background: #16161d; color: aqua; border: 1px solid aqua; border-radius: 5px; padding: 3px; width: 80px;">
+                <button onclick="checkPasscode()" style="background: aqua; border: none; border-radius: 5px; cursor: pointer; padding: 3px 8px;">✅</button>
+            </div>
+        </div>
+        <h2>الروابط</h2>
+    </div>
+
+<div id="links-container" class="links-grid">
+    </div>
+
+<div id="link-modal" class="modal">
+    <div class="modal-content">
+        <h3>إضافة رابط جديد</h3>
+        <input type="text" id="link-name" placeholder="إسم الرابط">
+        <input type="text" id="link-url" placeholder="الرابط ">
+        <div class="modal-buttons">
+            <button onclick="saveLink()" class="btn-confirm">حفظ</button>
+            <button onclick="closeModal()" class="btn-cancel">إلغاء</button>
+        </div>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
+
+    <script>
+        // 1. الإعدادات
+        const firebaseConfig = {
+            apiKey: "AIzaSyAHerXxCb6wqeHvUXuFB5KOiKcVHg4jEeU",
+            authDomain: "vandox.firebaseapp.com",
+            databaseURL: "https://vandox-default-rtdb.firebaseio.com",
+            projectId: "vandox",
+            storageBucket: "vandox.firebasestorage.app",
+            messagingSenderId: "953994388305",
+            appId: "1:953994388305:web:8c592dd98f764fb931e970",
+            measurementId: "G-1N9Y0NP8RB"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // 2. التحقق من الكود السري
+        function checkPasscode() {
+            const enteredPass = document.getElementById('admin-pass').value;
+            if (enteredPass === "VANDOX2026") {
+                localStorage.setItem('isAdmin', 'true');
+                showAdminFeatures();
+                alert("مرحباً فاندوكس!");
+            } else {
+                alert("الكود غلط!");
+            }
+        }
+
+        function showAdminFeatures() {
+            document.getElementById('admin-link').style.display = 'block';
+            document.getElementById('passcode-area').style.display = 'none';
+        }
+
+        // 3. التحكم في الـ Modal
+        document.getElementById('admin-link').onclick = (e) => {
+            e.preventDefault();
+            document.getElementById('link-modal').style.display = 'block';
+        };
+
+        function closeModal() {
+            document.getElementById('link-modal').style.display = 'none';
+        }
+
+        // 4. حفظ الرابط في Firebase (أونلاين)
+        function saveLink() {
+            const name = document.getElementById('link-name').value;
+            const url = document.getElementById('link-url').value;
+
+            if (name && url) {
+                database.ref('links').push({
+                    name: name,
+                    url: url
+                }).then(() => {
+                    closeModal();
+                    document.getElementById('link-name').value = '';
+                    document.getElementById('link-url').value = '';
+                });
+            } else {
+                alert("عمر الخانات كاملين!");
+            }
+        }
+
+        // 5. عرض الروابط من Firebase (Real-time لكل الناس)
+        database.ref('links').on('value', (snapshot) => {
+            const container = document.getElementById('links-container');
+            container.innerHTML = '';
+            const isAdmin = localStorage.getItem('isAdmin') === 'true';
+
+            snapshot.forEach((childSnapshot) => {
+                const link = childSnapshot.val();
+                const key = childSnapshot.key;
+                
+                const deleteBtn = isAdmin ? `<span class="delete-btn" onclick="deleteLink('${key}')">×</span>` : '';
+                
+                container.innerHTML += `
+                    <div class="link-item">
+                        ${deleteBtn}
+                        <a href="${link.url}" target="_blank">${link.name}</a>
+                    </div>
+                `;
+            });
+        });
+
+        // 6. مسح الرابط من Firebase
+        function deleteLink(key) {
+            if (confirm("واش باغي تمسحو من السيرفر عند كلشي؟")) {
+                database.ref('links/' + key).remove();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('isAdmin') === 'true') {
+                showAdminFeatures();
+            }
+        });
+    </script>
+
+</body>
+</html>
