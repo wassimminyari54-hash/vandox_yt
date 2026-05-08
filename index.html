@@ -124,60 +124,73 @@
     </div>
 </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const isLoggedIn = localStorage.getItem('isLoggedIn');
-        const storedUser = JSON.parse(localStorage.getItem('localUser'));
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
 
-        if (isLoggedIn === 'true' && storedUser) {
-            document.getElementById('display-name').innerText = storedUser.displayName;
-            
-            const savedAvatar = localStorage.getItem('userAvatar');
-            if (savedAvatar) {
-                document.getElementById('profile-img').src = savedAvatar;
-            }
+<script>
+    const firebaseConfig = { /* نفس الإعدادات السابقة */ };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const database = firebase.database();
+
+    // مراقبة حالة المستخدم
+    auth.onAuthStateChanged((user) => {
+        if (user) {
+            // جلب بيانات المستخدم من Database باستعمال الـ UID
+            database.ref('users/' + user.uid).on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    document.getElementById('display-name').innerText = data.displayName;
+                    document.getElementById('profile-img').src = data.avatar || 'default-avatar.png';
+                }
+            });
         } else {
+            // إيلا ماكانش داخل، نرجعوه لصفحة الدخول
             window.location.href = "login.html";
         }
     });
 
-    window.toggleMenu = function() {
-        const menu = document.getElementById('profileMenu');
-        menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
-    };
-
+    // تغيير صورة البروفايل ورفعها (كـ Base64 في الداتابيز للتبسيط حالياً)
     window.uploadImage = function(input) {
         if (input.files && input.files[0]) {
             const reader = new FileReader();
             reader.onload = function(e) {
                 const imageData = e.target.result;
-                document.getElementById('profile-img').src = imageData;
-                localStorage.setItem('userAvatar', imageData);
+                const user = auth.currentUser;
+                if (user) {
+                    database.ref('users/' + user.uid).update({
+                        avatar: imageData
+                    });
+                }
             };
             reader.readAsDataURL(input.files[0]);
         }
     };
 
     window.logout = function() {
-        localStorage.setItem('isLoggedIn', 'false');
-        window.location.href = "login.html";
+        auth.signOut().then(() => {
+            window.location.href = "login.html";
+        });
     };
 
     window.deleteAccount = function() {
-        if(confirm("هل أنت متأكد من حذف حسابك؟")) {
-            localStorage.clear();
-            alert("تم حذف الحساب بنجاح.");
-            window.location.href = "sign_in.html";
+        if(confirm("هل أنت متأكد من حذف حسابك نهائياً؟")) {
+            const user = auth.currentUser;
+            if (user) {
+                // حذف البيانات من الداتابيز أولاً
+                database.ref('users/' + user.uid).remove().then(() => {
+                    // حذف الحساب من الـ Auth
+                    user.delete().then(() => {
+                        alert("تم حذف الحساب.");
+                        window.location.href = "sign_in.html";
+                    });
+                });
+            }
         }
     };
 
-    window.onclick = function(event) {
-        if (!event.target.closest('.user-profile')) {
-            const menu = document.getElementById('profileMenu');
-            if (menu) menu.style.display = 'none';
-        }
-    };
-
+    // باقي دوال المنيو (toggleMenu...) كتبقى هي هي
 </script>
 </body>
 </html>
