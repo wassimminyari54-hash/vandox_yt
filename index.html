@@ -151,9 +151,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const channelId = 'UCn6f85Gst-7h3H8P4N0LpUA';
     const rssUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`;
-    
-    // استعملنا هاد الـ Proxy حيت هو الأسرع وكيخدم مع GitHub Pages بلا مشاكل
-    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(rssUrl)}`;
+    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(rssUrl)}&cache=${new Date().getTime()}`; // زدنا الوقت باش نكسرو الكاش
 
     const videoGrid = document.querySelector('.video-grid');
 
@@ -165,14 +163,21 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(data => {
             const parser = new DOMParser();
             const xmlDoc = parser.parseFromString(data.contents, "text/xml");
-            const entries = xmlDoc.getElementsByTagName('entry');
+            const entries = Array.from(xmlDoc.getElementsByTagName('entry'));
 
             if (entries.length > 0) {
-                videoGrid.innerHTML = ''; // مسح رسالة التحميل
+                // ترتيب الفيديوهات حسب التاريخ (الأحدث هو الأول)
+                entries.sort((a, b) => {
+                    const dateA = new Date(a.getElementsByTagName('published')[0].textContent);
+                    const dateB = new Date(b.getElementsByTagName('published')[0].textContent);
+                    return dateB - dateA;
+                });
 
-                for (let i = 0; i < Math.min(entries.length, 6); i++) {
-                    const videoId = entries[i].getElementsByTagName('yt:videoId')[0].textContent;
-                    const title = entries[i].getElementsByTagName('title')[0].textContent;
+                videoGrid.innerHTML = ''; // مسح المحتوى القديم
+
+                entries.slice(0, 6).forEach(entry => {
+                    const videoId = entry.getElementsByTagName('yt:videoId')[0].textContent;
+                    const title = entry.getElementsByTagName('title')[0].textContent;
 
                     const card = `
                         <div class="video-card">
@@ -184,22 +189,12 @@ document.addEventListener('DOMContentLoaded', () => {
                             </iframe>
                         </div>`;
                     videoGrid.innerHTML += card;
-                }
-            } else {
-                throw new Error('No videos');
+                });
             }
         })
         .catch(err => {
-            console.error(err);
-            // إيلا فشل السيرفر، غنحطو هاد الـ 6 فيديوهات يدوياً باش السيت ميبقاش "خاسر"
-            videoGrid.innerHTML = `
-                <div class="video-card"><iframe src="https://www.youtube.com/embed/IRMcOlC3GQY" frameborder="0" allowfullscreen></iframe></div>
-                <div class="video-card"><iframe src="https://www.youtube.com/embed/wMDsQZ-e02Q" frameborder="0" allowfullscreen></iframe></div>
-                <div class="video-card"><iframe src="https://www.youtube.com/embed/BYSjIjCrs2s" frameborder="0" allowfullscreen></iframe></div>
-                <div class="video-card"><iframe src="https://www.youtube.com/embed/Ev1Piuz4HrA" frameborder="0" allowfullscreen></iframe></div>
-                <div class="video-card"><iframe src="https://www.youtube.com/embed/MQMtAPVZ3gk" frameborder="0" allowfullscreen></iframe></div>
-                <div class="video-card"><iframe src="https://www.youtube.com/embed/dK_1WZ-9ILE" frameborder="0" allowfullscreen></iframe></div>
-            `;
+            console.error("مشكل في التحديث:", err);
+            // إيلا فشل التحديث، كيبقاو الفيديوهات اليدوية
         });
 });
 </script>
