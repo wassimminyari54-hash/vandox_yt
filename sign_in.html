@@ -34,26 +34,7 @@
         <p>لديك حساب بالفعل؟ <a href="login.html">تسجيل الدخول</a></p>
     </div>
 
-<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
-
 <script>
-    // إعدادات Firebase الخاصة بك
-    const firebaseConfig = {
-        apiKey: "AIzaSyAHerXxCb6wqeHvUXuFB5KOiKcVHg4jEeU",
-        authDomain: "vandox.firebaseapp.com",
-        databaseURL: "https://vandox-default-rtdb.firebaseio.com",
-        projectId: "vandox",
-        storageBucket: "vandox.firebasestorage.app",
-        messagingSenderId: "953994388305",
-        appId: "1:953994388305:web:8c592dd98f764fb931e970"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const database = firebase.database();
-
     document.getElementById('signupForm').addEventListener('submit', (e) => {
         e.preventDefault();
 
@@ -61,26 +42,18 @@
         const email = document.getElementById('signupEmail').value;
         const password = document.getElementById('signupPassword').value;
 
-        // إنشاء الحساب في Firebase Auth
-        auth.createUserWithEmailAndPassword(email, password)
-            .then((userCredential) => {
-                const user = userCredential.user;
-                
-                // تخزين اسم المستخدم في Realtime Database
-                database.ref('users/' + user.uid).set({
-                    displayName: username,
-                    email: email,
-                    avatar: 'default-avatar.png'
-                }).then(() => {
-                    alert("تم إنشاء الحساب بنجاح في Firebase!");
-                    window.location.href = "login.html";
-                });
-            })
-            .catch((error) => {
-                alert("خطأ: " + error.message);
-            });
+        const userData = {
+            displayName: username,
+            email: email,
+            password: password,
+            avatar: 'default-avatar.png'
+        };
+
+        localStorage.setItem('localUser', JSON.stringify(userData));
+
+        alert("تم إنشاء الحساب بنجاح!");
+        window.location.href = "login.html";
     });
 </script>
-
 </body>
 </html>

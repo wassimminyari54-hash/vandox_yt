@@ -31,39 +31,22 @@
         <p>ليس لديك حساب؟ <a href="sign_in.html">إنشاء حساب جديد</a></p>
     </div>
 
-<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
-
 <script>
-    // خاصك تحط هاد المعلومات كاملة هنا باش يخدم الاتصال
-    const firebaseConfig = {
-        apiKey: "AIzaSyAHerXxCb6wqeHvUXuFB5KOiKcVHg4jEeU",
-        authDomain: "vandox.firebaseapp.com",
-        databaseURL: "https://vandox-default-rtdb.firebaseio.com",
-        projectId: "vandox",
-        storageBucket: "vandox.firebasestorage.app",
-        messagingSenderId: "953994388305",
-        appId: "1:953994388305:web:8c592dd98f764fb931e970"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-
     document.getElementById('loginForm').addEventListener('submit', (e) => {
         e.preventDefault();
         
         const email = document.getElementById('loginEmail').value;
         const password = document.getElementById('loginPassword').value;
 
-        auth.signInWithEmailAndPassword(email, password)
-            .then(() => {
-                alert("مرحباً بك مجدداً!");
-                window.location.href = "index.html";
-            })
-            .catch((error) => {
-                console.error(error); // هادي غتبين ليك الخطأ الحقيقي في الكونسول
-                alert("الإيميل أو كلمة السر غلط أو الحساب ما فعلتيهش!");
-            });
+        const storedUser = JSON.parse(localStorage.getItem('localUser'));
+
+        if (storedUser && storedUser.email === email && storedUser.password === password) {
+            localStorage.setItem('isLoggedIn', 'true');
+            alert("مرحباً بك مجدداً!");
+            window.location.href = "index.html";
+        } else {
+            alert("الإيميل أو كلمة السر غلط، أو الحساب غير موجود!");
+        }
     });
 </script>
 </body>

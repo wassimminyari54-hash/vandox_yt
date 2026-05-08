@@ -28,7 +28,7 @@
         <div class="header">
             <div class="navbar">
                 <a href="link.html">الروابط</a>
-                <a href="">الشات</a>
+                <a href="chat.html">الشات</a>
                 <a href="https://mail.google.com/mail/u/0/#search/aymenberbar2012%40gmail.com?compose=new" target="_blank">الإقتراحات</a>
                 <a href="#videos">الفيديوهات</a>
                 <a href="#channel">عن القناة</a>
@@ -124,41 +124,60 @@
     </div>
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
-
 <script>
-    const firebaseConfig = {
-        apiKey: "AIzaSyAHerXxCb6wqeHvUXuFB5KOiKcVHg4jEeU",
-        authDomain: "vandox.firebaseapp.com",
-        databaseURL: "https://vandox-default-rtdb.firebaseio.com",
-        projectId: "vandox",
-        storageBucket: "vandox.firebasestorage.app",
-        messagingSenderId: "953994388305",
-        appId: "1:953994388305:web:8c592dd98f764fb931e970"
-    };
+    document.addEventListener('DOMContentLoaded', () => {
+        const isLoggedIn = localStorage.getItem('isLoggedIn');
+        const storedUser = JSON.parse(localStorage.getItem('localUser'));
 
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const database = firebase.database();
-
-    // أهم جزء: مراقبة الحالة فور دخول الصفحة
-    auth.onAuthStateChanged((user) => {
-        if (!user) {
-            // إيلا ما كانش مسجل الدخول، صيفطو نيشان لصفحة login.html
-            window.location.href = "login.html";
+        if (isLoggedIn === 'true' && storedUser) {
+            document.getElementById('display-name').innerText = storedUser.displayName;
+            
+            const savedAvatar = localStorage.getItem('userAvatar');
+            if (savedAvatar) {
+                document.getElementById('profile-img').src = savedAvatar;
+            }
         } else {
-            // إيلا كان مسجل، جيب بياناتو وعمر البروفايل
-            database.ref('users/' + user.uid).on('value', (snapshot) => {
-                const data = snapshot.val();
-                if (data) {
-                    document.getElementById('display-name').innerText = data.displayName;
-                    document.getElementById('profile-img').src = data.avatar || 'default-avatar.png';
-                }
-            });
+            window.location.href = "login.html";
         }
     });
+
+    window.toggleMenu = function() {
+        const menu = document.getElementById('profileMenu');
+        menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+    };
+
+    window.uploadImage = function(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const imageData = e.target.result;
+                document.getElementById('profile-img').src = imageData;
+                localStorage.setItem('userAvatar', imageData);
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    };
+
+    window.logout = function() {
+        localStorage.setItem('isLoggedIn', 'false');
+        window.location.href = "login.html";
+    };
+
+    window.deleteAccount = function() {
+        if(confirm("هل أنت متأكد من حذف حسابك؟")) {
+            localStorage.clear();
+            alert("تم حذف الحساب بنجاح.");
+            window.location.href = "sign_in.html";
+        }
+    };
+
+    window.onclick = function(event) {
+        if (!event.target.closest('.user-profile')) {
+            const menu = document.getElementById('profileMenu');
+            if (menu) menu.style.display = 'none';
+        }
+    };
+
 </script>
 </body>
 </html>

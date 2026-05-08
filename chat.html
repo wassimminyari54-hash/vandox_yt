@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat | Vandox</title>
+    <link rel="stylesheet" href="stayl_chat.css">
+</head>
+<body>
+    <div class="navbar_2">
+        <div class="header">
+            <div class="navbar">
+                <a href="index.html">الرئيسي</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="user-profile">
+        <div class="profile-trigger" onclick="toggleMenu()">
+            <span id="display-name">تحميل...</span>
+            <img id="profile-img" src="default-avatar.png" alt="Profile">
+        </div>
+        
+        <div class="profile-menu" id="profileMenu" style="display:none;">
+            <label for="imageInput">🖼️ تغيير الصورة</label>
+            <input type="file" id="imageInput" style="display:none" onchange="uploadImage(this)">
+            <button onclick="deleteAccount()" style="color: #ff4757;">🗑️ حذف الحساب</button>
+            <button onclick="logout()">🚪 تسجيل الخروج</button>
+        </div>
+    </div>
+
+    <div class="chat-container">
+        <div id="chat-box" class="chat-messages"></div>
+
+        <div class="chat-input-area">
+            <input type="text" id="message-input" placeholder="اكتب رسالتك هنا..." onkeypress="handleKeyPress(event)">
+            <button onclick="sendMessage()" id="send-btn">إرسال</button>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
+
+<script>
+    // 1. إعدادات Firebase
+    const firebaseConfig = {
+        apiKey: "AIzaSyAHerXxCb6wqeHvUXuFB5KOiKcVHg4jEeU",
+        authDomain: "vandox.firebaseapp.com",
+        databaseURL: "https://vandox-default-rtdb.firebaseio.com",
+        projectId: "vandox",
+        storageBucket: "vandox.firebasestorage.app",
+        messagingSenderId: "953994388305",
+        appId: "1:953994388305:web:8c592dd98f764fb931e970"
+    };
+
+    // تهيئة Firebase
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
+    const database = firebase.database();
+    const auth = firebase.auth();
+
+    const chatBox = document.getElementById('chat-box');
+    const messageInput = document.getElementById('message-input');
+
+    // 2. تحديث واجهة المستخدم (السمية والصورة)
+    function updateUI(user) {
+        const nameElement = document.getElementById('display-name');
+        const imgElement = document.getElementById('profile-img');
+
+        if (user) {
+            // إيلا اليوزر مسجل، كنجيبو سميتو وتصويرتو الحقيقية
+            const name = user.displayName || "متابع وفائي";
+            const photo = user.photoURL || "default-avatar.png";
+
+            if (nameElement) nameElement.innerText = name;
+            if (imgElement) imgElement.src = photo;
+
+            // كنخزنوهم ف المتصفح للاحتياط
+            localStorage.setItem('displayName', name);
+            localStorage.setItem('userAvatar', photo);
+        } else {
+            if (nameElement) nameElement.innerText = "زائر";
+        }
+    }
+
+    // 3. مراقب حالة تسجيل الدخول (أهم جزء)
+    auth.onAuthStateChanged((user) => {
+        if (user) {
+            console.log("اليوزر داخل:", user.displayName);
+            updateUI(user);
+        } else {
+            console.log("حتى حد ما داخل");
+            updateUI(null);
+        }
+    });
+
+    // 4. إرسال الرسالة
+    function sendMessage() {
+        const text = messageInput.value;
+        const user = auth.currentUser; // كنجيبو اليوزر اللي داخل دابا نيشان
+
+        if (text.trim() !== "" && user) {
+            database.ref('messages').push({
+                username: user.displayName || "متابع",
+                text: text,
+                avatar: user.photoURL || "default-avatar.png",
+                timestamp: Date.now()
+            }).then(() => {
+                messageInput.value = ""; 
+            });
+        } else if (!user) {
+            alert("خاصك تسجل الدخول أولاً!");
+        }
+    }
+
+    function handleKeyPress(e) {
+        if (e.key === 'Enter') sendMessage();
+    }
+
+    // 5. عرض الرسائل
+    database.ref('messages').limitToLast(30).on('child_added', (snapshot) => {
+        const data = snapshot.val();
+        const currentUser = auth.currentUser;
+        const isMe = currentUser && data.username === currentUser.displayName;
+
+        const msgHtml = `
+            <div class="message ${isMe ? 'my-message' : ''}">
+                <img src="${data.avatar}" class="chat-avatar" onerror="this.src='default-avatar.png'">
+                <div class="msg-content">
+                    <span class="user-name">${data.username}</span>
+                    <p class="text">${data.text}</p>
+                </div>
+            </div>
+        `;
+        chatBox.innerHTML += msgHtml;
+        chatBox.scrollTop = chatBox.scrollHeight;
+    } );
+
+    // دوال المنيو
+    function toggleMenu() {
+        const menu = document.getElementById('profileMenu');
+        if (menu) menu.style.display = (menu.style.display === 'none' || menu.style.display === '') ? 'block' : 'none';
+    }
+</script>
+</body>
+</html>
