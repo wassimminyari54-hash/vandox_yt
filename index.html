@@ -129,15 +129,27 @@
 <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
 
 <script>
-    const firebaseConfig = { /* نفس الإعدادات السابقة */ };
+    const firebaseConfig = {
+        apiKey: "AIzaSyAHerXxCb6wqeHvUXuFB5KOiKcVHg4jEeU",
+        authDomain: "vandox.firebaseapp.com",
+        databaseURL: "https://vandox-default-rtdb.firebaseio.com",
+        projectId: "vandox",
+        storageBucket: "vandox.firebasestorage.app",
+        messagingSenderId: "953994388305",
+        appId: "1:953994388305:web:8c592dd98f764fb931e970"
+    };
+
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const database = firebase.database();
 
-    // مراقبة حالة المستخدم
+    // أهم جزء: مراقبة الحالة فور دخول الصفحة
     auth.onAuthStateChanged((user) => {
-        if (user) {
-            // جلب بيانات المستخدم من Database باستعمال الـ UID
+        if (!user) {
+            // إيلا ما كانش مسجل الدخول، صيفطو نيشان لصفحة login.html
+            window.location.href = "login.html";
+        } else {
+            // إيلا كان مسجل، جيب بياناتو وعمر البروفايل
             database.ref('users/' + user.uid).on('value', (snapshot) => {
                 const data = snapshot.val();
                 if (data) {
@@ -145,52 +157,8 @@
                     document.getElementById('profile-img').src = data.avatar || 'default-avatar.png';
                 }
             });
-        } else {
-            // إيلا ماكانش داخل، نرجعوه لصفحة الدخول
-            window.location.href = "login.html";
         }
     });
-
-    // تغيير صورة البروفايل ورفعها (كـ Base64 في الداتابيز للتبسيط حالياً)
-    window.uploadImage = function(input) {
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const imageData = e.target.result;
-                const user = auth.currentUser;
-                if (user) {
-                    database.ref('users/' + user.uid).update({
-                        avatar: imageData
-                    });
-                }
-            };
-            reader.readAsDataURL(input.files[0]);
-        }
-    };
-
-    window.logout = function() {
-        auth.signOut().then(() => {
-            window.location.href = "login.html";
-        });
-    };
-
-    window.deleteAccount = function() {
-        if(confirm("هل أنت متأكد من حذف حسابك نهائياً؟")) {
-            const user = auth.currentUser;
-            if (user) {
-                // حذف البيانات من الداتابيز أولاً
-                database.ref('users/' + user.uid).remove().then(() => {
-                    // حذف الحساب من الـ Auth
-                    user.delete().then(() => {
-                        alert("تم حذف الحساب.");
-                        window.location.href = "sign_in.html";
-                    });
-                });
-            }
-        }
-    };
-
-    // باقي دوال المنيو (toggleMenu...) كتبقى هي هي
 </script>
 </body>
 </html>
