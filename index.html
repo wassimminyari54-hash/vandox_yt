@@ -28,7 +28,7 @@
         <div class="header">
             <div class="navbar">
                 <a href="link.html">الروابط</a>
-                <a href="chat.html">الشات</a>
+                <a href="ch">الشات</a>
                 <a href="https://mail.google.com/mail/u/0/#search/aymenberbar2012%40gmail.com?compose=new" target="_blank">الإقتراحات</a>
                 <a href="#videos">الفيديوهات</a>
                 <a href="#channel">عن القناة</a>
@@ -64,34 +64,64 @@
 <div class="video-grid"> 
     
     <!-- الفيديو الأول -->
-<div id="video-grid" class="video-grid">
-    <p style="color: white; text-align: center;">جاري تحميل أحدث الفيديوهات...</p>
-</div>
+    <div class="video-card">
+        <iframe 
+            src="https://www.youtube.com/embed/_XTtUvNi9v0"
+            title="Stellar Blade Boss Challenge" 
+            frameborder="0" 
+            allowfullscreen>
+        </iframe>
+    </div>
 
     <!-- الفيديو الثاني -->
-<div id="video-grid" class="video-grid">
-    <p style="color: white; text-align: center;">جاري تحميل أحدث الفيديوهات...</p>
-</div>
+    <div class="video-card">
+        <iframe 
+            src="https://www.youtube.com/embed/IRMcOlC3GQY"
+            title="Apex Legends Ignite" 
+            frameborder="0" 
+            allowfullscreen>
+        </iframe>
+    </div>
 
     <!-- الفيديوالثالث -->
-<div id="video-grid" class="video-grid">
-    <p style="color: white; text-align: center;">جاري تحميل أحدث الفيديوهات...</p>
-</div>
+    <div class="video-card">
+        <iframe 
+            src="https://www.youtube.com/embed/wMDsQZ-e02Q"
+            title="Apex Legends Ignite" 
+            frameborder="0" 
+            allowfullscreen>
+        </iframe>
+    </div>
 
     <!--الفيديو الرابع-->
-<div id="video-grid" class="video-grid">
-    <p style="color: white; text-align: center;">جاري تحميل أحدث الفيديوهات...</p>
-</div>>
+    <div class="video-card">
+        <iframe 
+            src="https://www.youtube.com/embed/BYSjIjCrs2s"
+            title="Apex Legends Ignite" 
+            frameborder="0" 
+            allowfullscreen>
+        </iframe>
+    </div>
 
     <!--الفيديو الخامس-->
-<div id="video-grid" class="video-grid">
-    <p style="color: white; text-align: center;">جاري تحميل أحدث الفيديوهات...</p>
-</div>
+    <div class="video-card">
+        <iframe 
+            src="https://www.youtube.com/embed/Ev1Piuz4HrA"
+            title="Apex Legends Ignite" 
+            frameborder="0" 
+            allowfullscreen>
+        </iframe>
+    </div>
 
     <!--الفيديو السادس-->
-<div id="video-grid" class="video-grid">
-    <p style="color: white; text-align: center;">جاري تحميل أحدث الفيديوهات...</p>
-</div>
+    <div class="video-card">
+        <iframe 
+            src="https://www.youtube.com/embed/MQMtAPVZ3gk"
+            title="Apex Legends Ignite" 
+            frameborder="0" 
+            allowfullscreen>
+        </iframe>
+    </div>
 </div>
 
 <script>
@@ -148,55 +178,6 @@
         }
     };
 
-document.addEventListener('DOMContentLoaded', () => {
-    const channelId = 'UCn6f85Gst-7h3H8P4N0LpUA';
-    const rssUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`;
-    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(rssUrl)}&cache=${new Date().getTime()}`; // زدنا الوقت باش نكسرو الكاش
-
-    const videoGrid = document.querySelector('.video-grid');
-
-    fetch(proxyUrl)
-        .then(response => {
-            if (response.ok) return response.json();
-            throw new Error('Network error');
-        })
-        .then(data => {
-            const parser = new DOMParser();
-            const xmlDoc = parser.parseFromString(data.contents, "text/xml");
-            const entries = Array.from(xmlDoc.getElementsByTagName('entry'));
-
-            if (entries.length > 0) {
-                // ترتيب الفيديوهات حسب التاريخ (الأحدث هو الأول)
-                entries.sort((a, b) => {
-                    const dateA = new Date(a.getElementsByTagName('published')[0].textContent);
-                    const dateB = new Date(b.getElementsByTagName('published')[0].textContent);
-                    return dateB - dateA;
-                });
-
-                videoGrid.innerHTML = ''; // مسح المحتوى القديم
-
-                entries.slice(0, 6).forEach(entry => {
-                    const videoId = entry.getElementsByTagName('yt:videoId')[0].textContent;
-                    const title = entry.getElementsByTagName('title')[0].textContent;
-
-                    const card = `
-                        <div class="video-card">
-                            <iframe 
-                                src="https://www.youtube.com/embed/${videoId}" 
-                                title="${title}"
-                                frameborder="0" 
-                                allowfullscreen>
-                            </iframe>
-                        </div>`;
-                    videoGrid.innerHTML += card;
-                });
-            }
-        })
-        .catch(err => {
-            console.error("مشكل في التحديث:", err);
-            // إيلا فشل التحديث، كيبقاو الفيديوهات اليدوية
-        });
-});
 </script>
 </body>
 </html>
