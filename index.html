@@ -64,64 +64,34 @@
 <div class="video-grid"> 
     
     <!-- الفيديو الأول -->
-    <div class="video-card">
-        <iframe 
-            src="https://www.youtube.com/embed/IRMcOlC3GQY"
-            title="Stellar Blade Boss Challenge" 
-            frameborder="0" 
-            allowfullscreen>
-        </iframe>
-    </div>
+<div id="video-grid" class="video-grid">
+    <p style="color: white; text-align: center;">جاري تحميل أحدث الفيديوهات...</p>
+</div>
 
     <!-- الفيديو الثاني -->
-    <div class="video-card">
-        <iframe 
-            src="https://www.youtube.com/embed/wMDsQZ-e02Q"
-            title="Apex Legends Ignite" 
-            frameborder="0" 
-            allowfullscreen>
-        </iframe>
-    </div>
+<div id="video-grid" class="video-grid">
+    <p style="color: white; text-align: center;">جاري تحميل أحدث الفيديوهات...</p>
+</div>
 
     <!-- الفيديوالثالث -->
-    <div class="video-card">
-        <iframe 
-            src="https://www.youtube.com/embed/BYSjIjCrs2s"
-            title="Apex Legends Ignite" 
-            frameborder="0" 
-            allowfullscreen>
-        </iframe>
-    </div>
+<div id="video-grid" class="video-grid">
+    <p style="color: white; text-align: center;">جاري تحميل أحدث الفيديوهات...</p>
+</div>
 
     <!--الفيديو الرابع-->
-    <div class="video-card">
-        <iframe 
-            src="https://www.youtube.com/embed/Ev1Piuz4HrA"
-            title="Apex Legends Ignite" 
-            frameborder="0" 
-            allowfullscreen>
-        </iframe>
-    </div>
+<div id="video-grid" class="video-grid">
+    <p style="color: white; text-align: center;">جاري تحميل أحدث الفيديوهات...</p>
+</div>>
 
     <!--الفيديو الخامس-->
-    <div class="video-card">
-        <iframe 
-            src="https://www.youtube.com/embed/MQMtAPVZ3gk"
-            title="Apex Legends Ignite" 
-            frameborder="0" 
-            allowfullscreen>
-        </iframe>
-    </div>
+<div id="video-grid" class="video-grid">
+    <p style="color: white; text-align: center;">جاري تحميل أحدث الفيديوهات...</p>
+</div>
 
     <!--الفيديو السادس-->
-    <div class="video-card">
-        <iframe 
-            src="https://www.youtube.com/embed/dK_1WZ-9ILE"
-            title="Apex Legends Ignite" 
-            frameborder="0" 
-            allowfullscreen>
-        </iframe>
-    </div>
+<div id="video-grid" class="video-grid">
+    <p style="color: white; text-align: center;">جاري تحميل أحدث الفيديوهات...</p>
+</div>
 </div>
 
 <script>
@@ -177,6 +147,60 @@
             if (menu) menu.style.display = 'none';
         }
     };
+
+document.addEventListener('DOMContentLoaded', () => {
+    const channelId = 'UCn6f85Gst-7h3H8P4N0LpUA';
+    const rssUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`;
+    
+    // استخدمت رابط خارجي آخر كاحتياط (Proxy) باش نتفاداو مشاكل المنع
+    const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
+
+    fetch(proxyUrl)
+        .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.json();
+        })
+        .then(data => {
+            const videoGrid = document.querySelector('.video-grid');
+            
+            if (data.status === 'ok' && data.items.length > 0) {
+                videoGrid.innerHTML = ''; // خوي البلاصة من "جاري التحميل"
+
+                data.items.slice(0, 6).forEach(item => {
+                    // طريقة مضمونة لجلب الـ ID من الرابط سواء كان قصير أو طويل
+                    const videoUrl = item.link;
+                    let videoId = "";
+                    
+                    if (videoUrl.includes('v=')) {
+                        videoId = videoUrl.split('v=')[1].split('&')[0];
+                    } else if (videoUrl.includes('shorts/')) {
+                        videoId = videoUrl.split('shorts/')[1].split('?')[0];
+                    } else {
+                        videoId = videoUrl.split('/').pop();
+                    }
+
+                    const videoCard = `
+                        <div class="video-card">
+                            <iframe 
+                                src="https://www.youtube.com/embed/${videoId}"
+                                title="${item.title}" 
+                                frameborder="0" 
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+                    `;
+                    videoGrid.innerHTML += videoCard;
+                });
+            } else {
+                videoGrid.innerHTML = '<p style="color:white; grid-column: 1/-1; text-align:center;">ما لقيت حتى فيديو، جرب دير Refresh</p>';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.querySelector('.video-grid').innerHTML = '<p style="color:red; grid-column: 1/-1; text-align:center;">وقع مشكل فالبحث، تأكد من الأنترنيت</p>';
+        });
+});
 
 </script>
 </body>
