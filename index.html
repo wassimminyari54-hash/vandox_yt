@@ -152,56 +152,53 @@ document.addEventListener('DOMContentLoaded', () => {
     const channelId = 'UCn6f85Gst-7h3H8P4N0LpUA';
     const rssUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`;
     
-    // استخدمت رابط خارجي آخر كاحتياط (Proxy) باش نتفاداو مشاكل المنع
-    const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
+    // هادي خدمة "Proxy" قوية كتخليك تجيب البيانات بلا مشاكل ديال CORS أو HTTPS
+    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(rssUrl)}`;
 
     fetch(proxyUrl)
         .then(response => {
-            if (!response.ok) throw new Error('Network response was not ok');
-            return response.json();
+            if (response.ok) return response.json();
+            throw new Error('Network response was not ok.');
         })
         .then(data => {
+            // "allorigins" كترجع البيانات وسط "contents"
+            const parser = new DOMParser();
+            const xmlDoc = parser.parseFromString(data.contents, "text/xml");
+            const entries = xmlDoc.getElementsByTagName('entry');
             const videoGrid = document.querySelector('.video-grid');
-            
-            if (data.status === 'ok' && data.items.length > 0) {
-                videoGrid.innerHTML = ''; // خوي البلاصة من "جاري التحميل"
 
-                data.items.slice(0, 6).forEach(item => {
-                    // طريقة مضمونة لجلب الـ ID من الرابط سواء كان قصير أو طويل
-                    const videoUrl = item.link;
-                    let videoId = "";
-                    
-                    if (videoUrl.includes('v=')) {
-                        videoId = videoUrl.split('v=')[1].split('&')[0];
-                    } else if (videoUrl.includes('shorts/')) {
-                        videoId = videoUrl.split('shorts/')[1].split('?')[0];
-                    } else {
-                        videoId = videoUrl.split('/').pop();
-                    }
+            if (entries.length > 0) {
+                videoGrid.innerHTML = ''; // كنخويو "جاري التحميل"
+
+                // كنجيبو أول 6 فيديوهات
+                for (let i = 0; i < Math.min(entries.length, 6); i++) {
+                    const entry = entries[i];
+                    const title = entry.getElementsByTagName('title')[0].textContent;
+                    const videoId = entry.getElementsByTagName('yt:videoId')[0].textContent;
 
                     const videoCard = `
                         <div class="video-card">
                             <iframe 
                                 src="https://www.youtube.com/embed/${videoId}"
-                                title="${item.title}" 
+                                title="${title}" 
                                 frameborder="0" 
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                                 allowfullscreen>
                             </iframe>
                         </div>
                     `;
                     videoGrid.innerHTML += videoCard;
-                });
+                }
             } else {
-                videoGrid.innerHTML = '<p style="color:white; grid-column: 1/-1; text-align:center;">ما لقيت حتى فيديو، جرب دير Refresh</p>';
+                throw new Error('No entries found');
             }
         })
         .catch(error => {
-            console.error('Error:', error);
-            document.querySelector('.video-grid').innerHTML = '<p style="color:red; grid-column: 1/-1; text-align:center;">وقع مشكل فالبحث، تأكد من الأنترنيت</p>';
+            console.error('Error fetching videos:', error);
+            // إيلا فشل كلشي، غيتحطو فيديوهات افتراضية (Fallback) باش ما يبقاش السيت خاوي
+            const videoGrid = document.querySelector('.video-grid');
+            videoGrid.innerHTML = '<p style="color:white; text-align:center; grid-column: 1/-1;">عذراً، كاين ضغط على السيرفر. حاول دير تحديث للصفحة.</p>';
         });
 });
-
 </script>
 </body>
 </html>
