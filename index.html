@@ -152,51 +152,54 @@ document.addEventListener('DOMContentLoaded', () => {
     const channelId = 'UCn6f85Gst-7h3H8P4N0LpUA';
     const rssUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`;
     
-    // هادي خدمة "Proxy" قوية كتخليك تجيب البيانات بلا مشاكل ديال CORS أو HTTPS
+    // استعملنا هاد الـ Proxy حيت هو الأسرع وكيخدم مع GitHub Pages بلا مشاكل
     const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(rssUrl)}`;
+
+    const videoGrid = document.querySelector('.video-grid');
 
     fetch(proxyUrl)
         .then(response => {
             if (response.ok) return response.json();
-            throw new Error('Network response was not ok.');
+            throw new Error('Network error');
         })
         .then(data => {
-            // "allorigins" كترجع البيانات وسط "contents"
             const parser = new DOMParser();
             const xmlDoc = parser.parseFromString(data.contents, "text/xml");
             const entries = xmlDoc.getElementsByTagName('entry');
-            const videoGrid = document.querySelector('.video-grid');
 
             if (entries.length > 0) {
-                videoGrid.innerHTML = ''; // كنخويو "جاري التحميل"
+                videoGrid.innerHTML = ''; // مسح رسالة التحميل
 
-                // كنجيبو أول 6 فيديوهات
                 for (let i = 0; i < Math.min(entries.length, 6); i++) {
-                    const entry = entries[i];
-                    const title = entry.getElementsByTagName('title')[0].textContent;
-                    const videoId = entry.getElementsByTagName('yt:videoId')[0].textContent;
+                    const videoId = entries[i].getElementsByTagName('yt:videoId')[0].textContent;
+                    const title = entries[i].getElementsByTagName('title')[0].textContent;
 
-                    const videoCard = `
+                    const card = `
                         <div class="video-card">
                             <iframe 
-                                src="https://www.youtube.com/embed/${videoId}"
-                                title="${title}" 
+                                src="https://www.youtube.com/embed/${videoId}" 
+                                title="${title}"
                                 frameborder="0" 
                                 allowfullscreen>
                             </iframe>
-                        </div>
-                    `;
-                    videoGrid.innerHTML += videoCard;
+                        </div>`;
+                    videoGrid.innerHTML += card;
                 }
             } else {
-                throw new Error('No entries found');
+                throw new Error('No videos');
             }
         })
-        .catch(error => {
-            console.error('Error fetching videos:', error);
-            // إيلا فشل كلشي، غيتحطو فيديوهات افتراضية (Fallback) باش ما يبقاش السيت خاوي
-            const videoGrid = document.querySelector('.video-grid');
-            videoGrid.innerHTML = '<p style="color:white; text-align:center; grid-column: 1/-1;">عذراً، كاين ضغط على السيرفر. حاول دير تحديث للصفحة.</p>';
+        .catch(err => {
+            console.error(err);
+            // إيلا فشل السيرفر، غنحطو هاد الـ 6 فيديوهات يدوياً باش السيت ميبقاش "خاسر"
+            videoGrid.innerHTML = `
+                <div class="video-card"><iframe src="https://www.youtube.com/embed/IRMcOlC3GQY" frameborder="0" allowfullscreen></iframe></div>
+                <div class="video-card"><iframe src="https://www.youtube.com/embed/wMDsQZ-e02Q" frameborder="0" allowfullscreen></iframe></div>
+                <div class="video-card"><iframe src="https://www.youtube.com/embed/BYSjIjCrs2s" frameborder="0" allowfullscreen></iframe></div>
+                <div class="video-card"><iframe src="https://www.youtube.com/embed/Ev1Piuz4HrA" frameborder="0" allowfullscreen></iframe></div>
+                <div class="video-card"><iframe src="https://www.youtube.com/embed/MQMtAPVZ3gk" frameborder="0" allowfullscreen></iframe></div>
+                <div class="video-card"><iframe src="https://www.youtube.com/embed/dK_1WZ-9ILE" frameborder="0" allowfullscreen></iframe></div>
+            `;
         });
 });
 </script>
