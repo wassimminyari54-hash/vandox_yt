@@ -189,14 +189,137 @@ h2 {
     background: rgba(0, 255, 255, 0.1);
 }
 
-/* Container الكبير اللي جامع الشات كامل */
 .chat-container {
+
+    width: 95%;
+
+    max-width: 1400px;
+
+    margin: 100px auto 20px;
+
+    height: calc(100vh - 140px);
+
     display: flex;
+
     flex-direction: column;
-    /* كياخد الطول ديال الشاشة كاملة ناقص الـ Navbar */
-    height: calc(100vh - 70px); 
-    margin-top: 10px;
-    position: relative;
+
+    background: rgba(255,255,255,0.05);
+
+    border: 2px solid aqua;
+
+    border-radius: 25px;
+
+    backdrop-filter: blur(10px);
+
+    overflow: hidden;
+
+}
+
+
+/* الرسائل */
+
+.chat-messages {
+
+    flex: 1;
+
+    overflow-y: auto;
+
+    padding: 20px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 15px;
+
+}
+
+
+/* منطقة الكتابة */
+
+.chat-input-area {
+
+    padding: 20px;
+
+    border-top: 1px solid rgba(0,255,255,0.2);
+
+    display: flex;
+
+    gap: 10px;
+
+    background: rgba(0,0,0,0.3);
+
+}
+
+
+/* الانبوت */
+
+#message-input {
+
+    flex: 1;
+
+    background: rgba(255,255,255,0.05);
+
+    border: 1px solid rgba(0,255,255,0.3);
+
+    padding: 15px;
+
+    border-radius: 15px;
+
+    color: white;
+
+    outline: none;
+
+    font-size: 16px;
+
+}
+
+
+/* زر الإرسال */
+
+#send-btn {
+
+    background: aqua;
+
+    color: black;
+
+    border: none;
+
+    padding: 0 30px;
+
+    border-radius: 15px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+
+}
+
+#send-btn:hover {
+
+    transform: scale(1.05);
+
+}
+
+
+/* Responsive */
+
+@media(max-width:700px){
+
+    .chat-container{
+
+        width: 100%;
+
+        height: calc(100vh - 90px);
+
+        margin: 80px 0 0;
+
+        border-radius: 0;
+
+    }
+
 }
 
 /* البلاصة فين كيبانو الرسائل */
@@ -305,6 +428,25 @@ h2 {
 /* الرسائل ديال لخرين ما كيبانش فيهم زر الحذف */
 .message:not(.my-message) .delete-btn {
     display: none;
+}
+
+.toast {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background: rgba(0, 255, 255, 0.9);
+    color: black;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-weight: bold;
+    display: none;
+    z-index: 9999;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
 }
 
 .container_contact{
