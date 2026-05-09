@@ -27,6 +27,7 @@
     <div class="navbar_2">
         <div class="header">
             <div class="navbar">
+                <a href="#footer">التواصل/الحقوق</a>
                 <a href="link.html">الروابط</a>
                 <a href="chat.html">الشات</a>
                 <a href="https://mail.google.com/mail/u/0/#search/aymenberbar2012%40gmail.com?compose=new" target="_blank">الإقتراحات</a>
@@ -177,7 +178,71 @@
             if (menu) menu.style.display = 'none';
         }
     };
+   
+    function showPup(platform) {
+        // إخفاء جميع الـ popups
+        const allPopups = document.querySelectorAll('.pup');
+        allPopups.forEach(popup => {
+            popup.classList.remove('open');
+        });
+        
+        // إظهار الـ popup المطلوب
+        const targetPopup = document.getElementById(`popup_${platform}`);
+        if (targetPopup) {
+            targetPopup.classList.add('open');
+            
+            // إخفاء الـ popup بعد 3 ثواني
+            setTimeout(() => {
+                targetPopup.classList.remove('open');
+            }, 3000);
+        }
+    }
 
 </script>
+
+<div id="popup_yt" class="pup">
+    <a href="https://youtube.com/@vandox_yt0531">قناة vandox</a>
+    <a href="https://youtube.com/@matrix-404-z2i">قناة المطور</a>
+</div>
+
+<!-- Popup خاص بـ Telegram -->
+<div id="popup_tg" class="pup">
+    <a href="https://t.me/+213772623748">قناة التلغرام</a>
+</div>
+
+<!-- Popup خاص بـ Facebook -->
+<div id="popup_fb" class="pup">
+    <a href="https://www.facebook.com/help/2808345489420767/?helpref=uf_share">صفحة الفيسبوك</a>
+</div>
+
+<!-- Popup Instagram -->
+<div id="popup_insta" class="pup">
+    <a href="https://instagram.com/aymen_amine0531">انستغرام vandox</a>
+    <a href="https://instagram.com/matrix___404">المطور</a>
+</div>
+
+<!-- Popup Email -->
+<div id="popup_email" class="pup">
+    <a href="mailto:aymenberbar2012@gmail.com">vandox | aymenberbar2012@gmail.com</a>
+    <a href="mailto:wassimminyari54@gmail.com">wassimminyari54@gmail.com | لمطور</a>
+</div>
+
+<!-- Popup Whatsapp -->
+<div id="popup_whatsapp" class="pup">
+    <a href="https://wa.me/+213772623748">واتساب vandox</a>
+</div>
+
+<footer id="footer" class="footer">
+    <h2>التواصل</h2>
+    <div class="container_contact">
+        <button onclick="showPup('yt')" class="btn_con">youtube</button>
+        <button onclick="showPup('tg')" class="btn_con">telegram</button>
+        <button onclick="showPup('fb')" class="btn_con">facebook</button>
+        <button onclick="showPup('insta')" class="btn_con">instagram</button>
+        <button onclick="showPup('email')" class="btn_con">email</button>
+        <button onclick="showPup('whatsapp')" class="btn_con">whatsapp</button>
+    </div>
+</footer>
+
 </body>
 </html>
