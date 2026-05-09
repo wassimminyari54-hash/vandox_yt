@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Videos</title>
+
+<style>
+
+body{
+    background-color:#0b0b0b;
+    color:white;
+    margin:0;
+    padding:0;
+    overflow-x:hidden;
+
+    background-image:
+    linear-gradient(rgba(0,0,0,0.7),rgba(0,0,0,0.7)),
+    url('image/baner.png');
+
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+    background-attachment:fixed;
+
+    font-family:Arial,sans-serif;
+}
+
+/* NAVBAR */
+
+.navbar{
+
+    position:fixed;
+
+    top:20px;
+    right:20px;
+
+    z-index:1000;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+    padding:12px 20px;
+
+    border-radius:50px;
+
+    background:rgba(15,15,19,0.8);
+
+    backdrop-filter:blur(8px);
+
+    border:1px solid rgba(0,255,255,0.3);
+
+    box-shadow:0 4px 15px rgba(0,0,0,0.5);
+
+}
+
+.navbar a,
+.navbar button{
+
+    text-decoration:none;
+
+    color:white;
+
+    font-weight:bold;
+
+    background:none;
+
+    border:none;
+
+    cursor:pointer;
+
+    transition:0.3s;
+
+}
+
+.navbar a:hover,
+.navbar button:hover{
+
+    color:aqua;
+
+}
+
+/* PASSCODE */
+
+#passcode-area{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:5px;
+
+}
+
+#passcode-area input{
+
+    background:#16161d;
+
+    color:aqua;
+
+    border:1px solid aqua;
+
+    border-radius:8px;
+
+    padding:8px;
+
+    width:100px;
+
+}
+
+#passcode-area button{
+
+    background:aqua;
+
+    color:black;
+
+    border:none;
+
+    border-radius:8px;
+
+    padding:8px 12px;
+
+    font-weight:bold;
+
+}
+
+/* VIDEOS */
+
+.video-grid{
+
+    backdrop-filter:blur(8px);
+
+    display:grid;
+
+    grid-template-columns:repeat(3,1fr);
+
+    gap:40px;
+
+    padding:140px 40px 40px;
+
+    border:3px solid aqua;
+
+    border-radius:30px;
+
+    margin:40px;
+
+    background:rgba(0,255,255,0.05);
+
+}
+
+.video-card{
+
+    position:relative;
+
+    transition:0.3s;
+
+}
+
+.video-card:hover{
+
+    transform:translateY(-8px);
+
+}
+
+.video-card iframe{
+
+    width:100%;
+
+    aspect-ratio:16/9;
+
+    border-radius:40px;
+
+    border:2px solid aqua;
+
+    box-shadow:0 0 20px rgba(0,255,255,0.3);
+
+}
+
+/* DELETE BUTTON */
+
+.delete-btn{
+
+    position:absolute;
+
+    top:15px;
+
+    right:15px;
+
+    background:#ff003c;
+
+    color:white;
+
+    border:none;
+
+    width:40px;
+
+    height:40px;
+
+    border-radius:50%;
+
+    cursor:pointer;
+
+    font-size:16px;
+
+    z-index:100;
+
+    transition:0.3s;
+
+}
+
+.delete-btn:hover{
+
+    background:black;
+
+    transform:scale(1.1);
+
+}
+
+/* MODAL */
+
+#video-modal{
+
+    display:none;
+
+    position:fixed;
+
+    top:0;
+    left:0;
+
+    width:100%;
+    height:100%;
+
+    background:rgba(0,0,0,0.8);
+
+    backdrop-filter:blur(5px);
+
+    justify-content:center;
+    align-items:center;
+
+    z-index:2000;
+
+}
+
+.modal-box{
+
+    background:#16161d;
+
+    border:2px solid aqua;
+
+    border-radius:25px;
+
+    padding:30px;
+
+    width:320px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:15px;
+
+}
+
+.modal-box input{
+
+    padding:14px;
+
+    border-radius:12px;
+
+    border:1px solid aqua;
+
+    background:#0b0b0b;
+
+    color:white;
+
+}
+
+.modal-box button{
+
+    padding:14px;
+
+    border:none;
+
+    border-radius:12px;
+
+    cursor:pointer;
+
+    font-weight:bold;
+
+}
+
+.modal-box button:first-of-type{
+
+    background:aqua;
+
+    color:black;
+
+}
+
+.modal-box button:last-of-type{
+
+    background:#ff003c;
+
+    color:white;
+
+}
+
+/* RESPONSIVE */
+
+@media(max-width:1000px){
+
+    .video-grid{
+
+        grid-template-columns:repeat(2,1fr);
+
+    }
+
+}
+
+@media(max-width:700px){
+
+    .video-grid{
+
+        grid-template-columns:1fr;
+
+        margin:20px;
+
+        padding:120px 20px 20px;
+
+    }
+
+    .navbar{
+
+        right:50%;
+        transform:translateX(50%);
+
+        width:90%;
+
+        justify-content:center;
+
+        flex-wrap:wrap;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="navbar">
+
+    <a href="index.html">
+        الرئيسية
+    </a>
+
+    <button
+        id="video-admin"
+        onclick="openVideoModal()"
+        style="display:none;">
+
+        ➕ إضافة فيديو
+
+    </button>
+
+    <div id="passcode-area">
+
+        <input
+            type="password"
+            id="admin-pass"
+            placeholder="الكود">
+
+        <button onclick="checkPasscode()">
+            ✅
+        </button>
+
+    </div>
+
+</div>
+
+
+<div
+    id="videos-container"
+    class="video-grid">
+</div>
+
+
+<div id="video-modal">
+
+    <div class="modal-box">
+
+        <input
+            type="text"
+            id="video-url"
+            placeholder="رابط الفيديو">
+
+        <button onclick="saveVideo()">
+            تم
+        </button>
+
+        <button onclick="closeVideoModal()">
+            إلغاء
+        </button>
+
+    </div>
+
+</div>
+
+
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
+
+<script>
+
+// FIREBASE CONFIG
+
+const firebaseConfig = {
+
+    apiKey: "AIzaSyAHerXxCb6wqeHvUXuFB5KOiKcVHg4jEeU",
+
+    authDomain: "vandox.firebaseapp.com",
+
+    databaseURL: "https://vandox-default-rtdb.firebaseio.com",
+
+    projectId: "vandox",
+
+    storageBucket: "vandox.firebasestorage.app",
+
+    messagingSenderId: "953994388305",
+
+    appId: "1:953994388305:web:8c592dd98f764fb931e970",
+
+    measurementId: "G-1N9Y0NP8RB"
+
+};
+
+
+// START FIREBASE
+
+firebase.initializeApp(firebaseConfig);
+
+const database = firebase.database();
+
+
+// ADMIN LOGIN
+
+function checkPasscode(){
+
+    const enteredPass =
+    document.getElementById('admin-pass').value;
+
+    if(enteredPass === "VANDOX2026"){
+
+        localStorage.setItem(
+            'isVideoAdmin',
+            'true'
+        );
+
+        showAdminFeatures();
+
+        alert("مرحبا Vandox 🔥");
+
+    }else{
+
+        alert("الكود خاطئ ❌");
+
+    }
+
+}
+
+
+// SHOW ADMIN TOOLS
+
+function showAdminFeatures(){
+
+    document.getElementById(
+        'video-admin'
+    ).style.display = 'block';
+
+    document.getElementById(
+        'passcode-area'
+    ).style.display = 'none';
+
+}
+
+
+// OPEN MODAL
+
+function openVideoModal(){
+
+    document.getElementById(
+        'video-modal'
+    ).style.display = 'flex';
+
+}
+
+
+// CLOSE MODAL
+
+function closeVideoModal(){
+
+    document.getElementById(
+        'video-modal'
+    ).style.display = 'none';
+
+}
+
+
+// GET YOUTUBE ID
+
+function getYoutubeId(url){
+
+    let videoId = null;
+
+    // watch?v=
+
+    if(url.includes("watch?v=")){
+
+        videoId = url.split("v=")[1];
+
+        if(videoId.includes("&")){
+
+            videoId =
+            videoId.split("&")[0];
+
+        }
+
+    }
+
+    // youtu.be
+
+    else if(url.includes("youtu.be/")){
+
+        videoId =
+        url.split("youtu.be/")[1];
+
+        if(videoId.includes("?")){
+
+            videoId =
+            videoId.split("?")[0];
+
+        }
+
+    }
+
+    return videoId;
+
+}
+
+
+// SAVE VIDEO
+
+function saveVideo(){
+
+    const videoUrl =
+    document.getElementById(
+        'video-url'
+    ).value.trim();
+
+    const videoId =
+    getYoutubeId(videoUrl);
+
+    if(!videoId){
+
+        alert("رابط غير صالح ❌");
+
+        return;
+
+    }
+
+    database.ref('videos').push({
+
+        videoId: videoId
+
+    }).then(()=>{
+
+        document.getElementById(
+            'video-url'
+        ).value = '';
+
+        closeVideoModal();
+
+        alert("تمت إضافة الفيديو 🔥");
+
+    });
+
+}
+
+
+// SHOW VIDEOS
+
+database.ref('videos').on('value',(snapshot)=>{
+
+    const container =
+    document.getElementById(
+        'videos-container'
+    );
+
+    container.innerHTML = '';
+
+    const isAdmin =
+    localStorage.getItem(
+        'isVideoAdmin'
+    ) === 'true';
+
+    snapshot.forEach((childSnapshot)=>{
+
+        const video =
+        childSnapshot.val();
+
+        const key =
+        childSnapshot.key;
+
+        const deleteBtn = isAdmin
+
+        ? `<button
+            class="delete-btn"
+            onclick="deleteVideo('${key}')">
+            🗑️
+           </button>`
+
+        : '';
+
+        container.innerHTML += `
+
+        <div class="video-card">
+
+            ${deleteBtn}
+
+            <iframe
+                src="https://www.youtube.com/embed/${video.videoId}"
+                allowfullscreen>
+            </iframe>
+
+        </div>
+
+        `;
+
+    });
+
+});
+
+
+// DELETE VIDEO
+
+function deleteVideo(key){
+
+    if(confirm("هل تريد حذف الفيديو ؟")){
+
+        database.ref(
+            'videos/' + key
+        ).remove();
+
+    }
+
+}
+
+
+// PAGE LOAD
+
+document.addEventListener(
+    'DOMContentLoaded',
+    ()=>{
+
+    if(
+        localStorage.getItem(
+            'isVideoAdmin'
+        ) === 'true'
+    ){
+
+        showAdminFeatures();
+
+    }
+
+});
+
+</script>
+
+</body>
+</html>
